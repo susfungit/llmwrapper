@@ -8,6 +8,9 @@ A vendor-agnostic Python wrapper for interacting with multiple Large Language Mo
 - **Easy Provider Switching**: Change providers with minimal code changes
 - **Extensible**: Easy to add new providers by extending the base class
 - **Type Safety**: Full type hints for better development experience
+- **Built-in Logging**: Comprehensive logging for API calls, timing, and token usage
+- **Testing Suite**: Full test coverage with pytest
+- **Secure Configuration**: Environment variable and config file support
 
 ## 🔧 Installation
 
@@ -38,8 +41,8 @@ print(response)
 
 | Provider | Status | Default Model | Notes |
 |----------|--------|---------------|-------|
-| **OpenAI** | ✅ Active | `gpt-4` | Full support |
-| **Anthropic** | ✅ Active | `claude-3-opus-20240229` | Full support |
+| **OpenAI** | ✅ Active | `gpt-4` | Full support with logging |
+| **Anthropic** | ✅ Active | `claude-3-opus-20240229` | Full support with logging |
 | **Google Gemini** | ✅ Active | `gemini-pro` | Full support |
 | **Grok (xAI)** | ⚠️ Placeholder | `grok-1` | API not publicly available |
 
@@ -126,6 +129,32 @@ for provider in providers:
     print(f"{provider}: {response}")
 ```
 
+## 📊 Logging & Monitoring
+
+The library includes comprehensive logging for monitoring API usage:
+
+### Configure Logging Level
+```bash
+export LLMWRAPPER_LOG_LEVEL=DEBUG  # Options: DEBUG, INFO, WARNING, ERROR
+```
+
+### What Gets Logged
+- **API Calls**: Model name and message count
+- **Response Timing**: How long each API call takes
+- **Token Usage**: Prompt, completion, and total tokens (when available)
+- **Errors**: Failed API calls and error details
+
+### Example Log Output
+```
+[2024-01-15 10:30:45] [INFO] Calling gpt-4 with 2 message(s)
+[2024-01-15 10:30:47] [INFO] gpt-4 response received in 1.85 seconds
+[2024-01-15 10:30:47] [INFO] Prompt tokens: 45, Completion tokens: 123, Total: 168
+```
+
+### Log Files
+- Logs are written to both console and `llmwrapper.log` file
+- Log file creation is optional (gracefully handles permission errors)
+
 ## 🏗️ Architecture
 
 ### Project Structure
@@ -133,11 +162,15 @@ for provider in providers:
 llmwrapper/
 ├── base.py                 # Abstract base class
 ├── openai_wrapper.py       # OpenAI implementation
-├── anthropic_wrapper.py    # Anthropic Claude implementation
+├── anthropic_wrapper.py    # Anthropic Claude implementation  
 ├── gemini_wrapper.py       # Google Gemini implementation
 ├── grok_wrapper.py         # Grok placeholder implementation
 ├── factory.py              # Factory pattern for provider selection
-├── example_usage.py        # Usage examples
+├── logger.py               # Logging configuration
+├── logging_mixin.py        # Logging functionality mixin
+├── example_usage.py        # Usage examples with security best practices
+├── tests/
+│   └── test_llmwrapper.py  # Test suite
 ├── requirements.txt        # Dependencies
 └── README.md              # This file
 ```
@@ -146,18 +179,22 @@ llmwrapper/
 
 To add a new LLM provider:
 
-1. Create a new wrapper class extending `BaseLLM`:
+1. Create a new wrapper class extending `BaseLLM` and `LoggingMixin`:
 ```python
 from .base import BaseLLM
+from .logging_mixin import LoggingMixin
 
-class NewProviderWrapper(BaseLLM):
+class NewProviderWrapper(BaseLLM, LoggingMixin):
     def __init__(self, api_key: str, model: str):
         # Initialize your provider
         pass
     
     def chat(self, messages: list[dict], **kwargs) -> str:
+        start = self.log_call_start(self.model, len(messages))
         # Implement chat functionality
-        pass
+        response = your_api_call(messages, **kwargs)
+        self.log_call_end(self.model, start)
+        return response
 ```
 
 2. Update `factory.py` to include your provider:
@@ -170,6 +207,26 @@ def get_llm(provider: str, config: dict):
         return NewProviderWrapper(api_key=config["api_key"], model=config.get("model", "default-model"))
 ```
 
+## 🧪 Testing
+
+Run the test suite:
+```bash
+# Run all tests
+pytest
+
+# Run with verbose output
+pytest -v
+
+# Run specific test file
+pytest tests/test_llmwrapper.py
+```
+
+### Test Coverage
+- Base class functionality
+- Factory pattern provider selection
+- Error handling for invalid providers
+- Mock testing for API calls
+
 ## 🔐 API Keys Setup
 
 You'll need API keys from the respective providers:
@@ -178,6 +235,15 @@ You'll need API keys from the respective providers:
 - **Anthropic**: Get from [Anthropic Console](https://console.anthropic.com/)
 - **Google Gemini**: Get from [Google AI Studio](https://makersuite.google.com/app/apikey)
 - **Grok**: Not publicly available yet
+
+## 🌍 Environment Variables
+
+| Variable | Purpose | Default | Example |
+|----------|---------|---------|---------|
+| `LLMWRAPPER_LOG_LEVEL` | Set logging level | `INFO` | `DEBUG`, `WARNING` |
+| `OPENAI_API_KEY` | OpenAI authentication | - | `sk-...` |
+| `ANTHROPIC_API_KEY` | Anthropic authentication | - | `sk-ant-...` |
+| `GEMINI_API_KEY` | Google Gemini authentication | - | `AIza...` |
 
 ## ⚠️ Important Notes
 
@@ -189,12 +255,19 @@ You'll need API keys from the respective providers:
 
 4. **Security**: Never commit API keys to version control. Use environment variables or secure configuration files.
 
+5. **Logging**: Be mindful of logging sensitive information. The current implementation logs token usage and timing but not message content.
+
+## 🐛 Known Issues
+
+- **OpenAI API**: Currently uses deprecated `openai.ChatCompletion.create()`. Should be updated to use the modern OpenAI client for better compatibility with v1.0.0+.
+
 ## 🤝 Contributing
 
 1. Fork the repository
 2. Create a feature branch
 3. Add your changes with tests
-4. Submit a pull request
+4. Run the test suite: `pytest`
+5. Submit a pull request
 
 ## 📄 License
 

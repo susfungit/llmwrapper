@@ -1,5 +1,5 @@
-from .base import BaseLLM
-from .logging_mixin import LoggingMixin
+from base import BaseLLM
+from logging_mixin import LoggingMixin
 
 class GrokWrapper(BaseLLM, LoggingMixin):
     def __init__(self, api_key: str, model: str = "grok-1"):

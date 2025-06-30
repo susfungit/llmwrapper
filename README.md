@@ -11,6 +11,7 @@ A vendor-agnostic Python wrapper for interacting with multiple Large Language Mo
 - **Built-in Logging**: Comprehensive logging for API calls, timing, and token usage
 - **Testing Suite**: Full test coverage with pytest
 - **Secure Configuration**: Environment variable and config file support
+- **Modern API Support**: Uses latest OpenAI SDK v1.0.0+ with client-based approach
 
 ## 🔧 Installation
 
@@ -21,7 +22,7 @@ pip install -r requirements.txt
 ## 🚀 Quick Start
 
 ```python
-from llmwrapper.factory import get_llm
+from factory import get_llm
 
 # OpenAI Example
 config = {
@@ -41,7 +42,7 @@ print(response)
 
 | Provider | Status | Default Model | Notes |
 |----------|--------|---------------|-------|
-| **OpenAI** | ✅ Active | `gpt-4` | Full support with logging |
+| **OpenAI** | ✅ Active | `gpt-4` | Full support with logging, modern SDK v1.0.0+ |
 | **Anthropic** | ✅ Active | `claude-3-opus-20240229` | Full support with logging |
 | **Google Gemini** | ✅ Active | `gemini-pro` | Full support |
 | **Grok (xAI)** | ⚠️ Placeholder | `grok-1` | API not publicly available |
@@ -90,7 +91,7 @@ llm = get_llm("grok", config)
 
 ### Basic Chat
 ```python
-from llmwrapper.factory import get_llm
+from factory import get_llm
 
 # Initialize any provider
 llm = get_llm("anthropic", {
@@ -161,7 +162,7 @@ export LLMWRAPPER_LOG_LEVEL=DEBUG  # Options: DEBUG, INFO, WARNING, ERROR
 ```
 llmwrapper/
 ├── base.py                 # Abstract base class
-├── openai_wrapper.py       # OpenAI implementation
+├── openai_wrapper.py       # OpenAI implementation (modern SDK v1.0.0+)
 ├── anthropic_wrapper.py    # Anthropic Claude implementation  
 ├── gemini_wrapper.py       # Google Gemini implementation
 ├── grok_wrapper.py         # Grok placeholder implementation
@@ -181,8 +182,8 @@ To add a new LLM provider:
 
 1. Create a new wrapper class extending `BaseLLM` and `LoggingMixin`:
 ```python
-from .base import BaseLLM
-from .logging_mixin import LoggingMixin
+from base import BaseLLM
+from logging_mixin import LoggingMixin
 
 class NewProviderWrapper(BaseLLM, LoggingMixin):
     def __init__(self, api_key: str, model: str):
@@ -199,7 +200,7 @@ class NewProviderWrapper(BaseLLM, LoggingMixin):
 
 2. Update `factory.py` to include your provider:
 ```python
-from .new_provider_wrapper import NewProviderWrapper
+from new_provider_wrapper import NewProviderWrapper
 
 def get_llm(provider: str, config: dict):
     # ... existing providers ...
@@ -226,6 +227,7 @@ pytest tests/test_llmwrapper.py
 - Factory pattern provider selection
 - Error handling for invalid providers
 - Mock testing for API calls
+- Initialization testing for wrappers
 
 ## 🔐 API Keys Setup
 
@@ -257,9 +259,13 @@ You'll need API keys from the respective providers:
 
 5. **Logging**: Be mindful of logging sensitive information. The current implementation logs token usage and timing but not message content.
 
-## 🐛 Known Issues
+## ✅ Recent Updates
 
-- **OpenAI API**: Currently uses deprecated `openai.ChatCompletion.create()`. Should be updated to use the modern OpenAI client for better compatibility with v1.0.0+.
+### **v1.1.0 - Critical Fixes**
+- **✅ OpenAI API Modernization**: Updated to use OpenAI SDK v1.0.0+ client-based approach
+- **✅ Anthropic Logging Fix**: Resolved duplicate logging calls causing incorrect timing measurements  
+- **✅ Enhanced Testing**: Updated test suite with proper mocking for new API structures
+- **✅ Improved Requirements**: Added pytest-mock for better testing capabilities
 
 ## 🤝 Contributing
 

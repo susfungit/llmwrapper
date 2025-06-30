@@ -9,7 +9,7 @@ and interact with different LLM providers.
 import os
 import json
 from pathlib import Path
-from llmwrapper.factory import get_llm
+from factory import get_llm
 
 
 def example_with_environment_variables():

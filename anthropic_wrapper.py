@@ -1,7 +1,7 @@
 import anthropic
-from .base import BaseLLM
-from .logger import logger
-from .logging_mixin import LoggingMixin
+from base import BaseLLM
+from logger import logger
+from logging_mixin import LoggingMixin
 
 class ClaudeWrapper(BaseLLM, LoggingMixin):
     def __init__(self, api_key: str, model: str = "claude-3-opus-20240229"):
@@ -9,7 +9,7 @@ class ClaudeWrapper(BaseLLM, LoggingMixin):
         self.model = model
 
     def chat(self, messages: list[dict], **kwargs) -> str:
-        self.log_call_start(self.model, len(messages))
+        start = self.log_call_start(self.model, len(messages))
         system_prompt = ""
         user_prompt = ""
         for msg in messages:
@@ -17,7 +17,7 @@ class ClaudeWrapper(BaseLLM, LoggingMixin):
                 system_prompt = msg["content"]
             elif msg["role"] == "user":
                 user_prompt += msg["content"] + "\n"
-        start = self.log_call_start(self.model, len(messages))
+        
         response = self.client.messages.create(
             model=self.model,
             system=system_prompt,

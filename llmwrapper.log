@@ -1,0 +1,21 @@
+[2025-06-29 22:02:08,800] [INFO] Instantiating OpenAIWrapper
+[2025-06-29 22:02:08,801] [INFO] Instantiating ClaudeWrapper
+[2025-06-29 22:02:08,801] [INFO] Instantiating GeminiWrapper
+[2025-06-29 22:02:08,801] [INFO] Instantiating GrokWrapper
+[2025-06-29 22:02:08,802] [ERROR] Unsupported LLM provider: unknown
+[2025-06-29 22:02:18,963] [INFO] Instantiating OpenAIWrapper
+[2025-06-29 22:02:18,980] [INFO] Calling gpt-4 with 2 message(s)
+[2025-06-29 22:02:20,339] [INFO] gpt-4 response received in 1.36 seconds
+[2025-06-29 22:02:20,341] [INFO] Prompt tokens: 24, Completion tokens: 7, Total: 31
+[2025-06-29 22:02:20,342] [INFO] Instantiating OpenAIWrapper
+[2025-06-29 22:02:20,349] [INFO] Calling gpt-4 with 1 message(s)
+[2025-06-29 22:02:21,725] [INFO] gpt-4 response received in 1.38 seconds
+[2025-06-29 22:02:21,725] [INFO] Prompt tokens: 14, Completion tokens: 7, Total: 21
+[2025-06-29 22:02:21,725] [INFO] Instantiating ClaudeWrapper
+[2025-06-29 22:02:21,735] [INFO] Calling claude-3-sonnet-20240229 with 1 message(s)
+[2025-06-29 22:02:21,735] [INFO] Instantiating GeminiWrapper
+[2025-06-29 22:02:21,735] [INFO] Calling gemini-pro with 1 message(s)
+[2025-06-29 22:02:21,981] [INFO] Instantiating OpenAIWrapper
+[2025-06-29 22:02:21,989] [INFO] Calling gpt-4 with 1 message(s)
+[2025-06-29 22:02:25,252] [INFO] gpt-4 response received in 3.26 seconds
+[2025-06-29 22:02:25,253] [INFO] Prompt tokens: 12, Completion tokens: 68, Total: 80

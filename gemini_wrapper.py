@@ -1,6 +1,6 @@
 import google.generativeai as genai
-from .base import BaseLLM
-from .logging_mixin import LoggingMixin
+from base import BaseLLM
+from logging_mixin import LoggingMixin
 
 class GeminiWrapper(BaseLLM, LoggingMixin):
     def __init__(self, api_key: str, model: str = "gemini-pro"):

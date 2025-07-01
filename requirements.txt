@@ -1,9 +1,11 @@
+# Core LLM Provider Dependencies
 openai>=1.0.0
 anthropic>=0.3.11
-google-generativeai>=0.3.0
+google-genai>=0.1.0    # Updated Google Gemini API package
 
-# Development dependencies
-pytest>=7.0.0
-
-# Optional: For better testing and development
+# Development and Testing Dependencies
+pytest>=7.4.0
 pytest-mock>=3.10.0
+
+# Optional: Enhanced logging and utilities
+typing-extensions>=4.0.0  # For better type hints support

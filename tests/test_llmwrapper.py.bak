@@ -224,24 +224,13 @@ class TestWrapperInitialization:
         """Test that Grok wrapper can be initialized with proper parameters"""
         from grok_wrapper import GrokWrapper
         
-        with patch('grok_wrapper.OpenAI') as mock_openai:
-            mock_client = Mock()
-            mock_openai.return_value = mock_client
+        with patch.object(LoggingMixin, 'log_provider_init') as mock_log:
+            wrapper = GrokWrapper(api_key="test-key", model="grok-1")
             
-            with patch.object(LoggingMixin, 'log_provider_init') as mock_log:
-                wrapper = GrokWrapper(api_key="test-key", model="grok-beta")
-                
-                assert wrapper.model == "grok-beta"
-                assert wrapper.provider == "grok"
-                assert wrapper.api_key == "test-key"
-                assert wrapper.base_url == "https://api.x.ai/v1"
-                mock_log.assert_called_once_with("grok", "grok-beta")
-                
-                # Verify OpenAI client was initialized with correct parameters
-                mock_openai.assert_called_once_with(
-                    api_key="test-key",
-                    base_url="https://api.x.ai/v1"
-                )
+            assert wrapper.model == "grok-1"
+            assert wrapper.provider == "grok"
+            assert wrapper.api_key == "test-key"
+            mock_log.assert_called_once_with("grok", "grok-1")
 
 class TestWrapperChatMethods:
     """Test the chat methods of each wrapper with proper mocking"""

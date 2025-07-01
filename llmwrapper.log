@@ -19,3 +19,39 @@
 [2025-06-29 22:02:21,989] [INFO] Calling gpt-4 with 1 message(s)
 [2025-06-29 22:02:25,252] [INFO] gpt-4 response received in 3.26 seconds
 [2025-06-29 22:02:25,253] [INFO] Prompt tokens: 12, Completion tokens: 68, Total: 80
+[2025-06-30 20:36:20,856] [INFO] Instantiating OpenAIWrapper
+[2025-06-30 20:36:20,857] [INFO] Instantiating ClaudeWrapper
+[2025-06-30 20:36:20,857] [INFO] Instantiating GeminiWrapper
+[2025-06-30 20:36:20,858] [INFO] Instantiating GrokWrapper
+[2025-06-30 20:36:20,858] [ERROR] Unsupported LLM provider: unknown
+[2025-06-30 20:36:20,886] [INFO] Initialized openai wrapper with model: gpt-4
+[2025-06-30 20:36:20,891] [INFO] Initialized anthropic wrapper with model: claude-3-sonnet-20240229
+[2025-06-30 20:37:44,031] [INFO] Instantiating OpenAIWrapper
+[2025-06-30 20:37:44,032] [INFO] Instantiating ClaudeWrapper
+[2025-06-30 20:37:44,032] [INFO] Instantiating GeminiWrapper
+[2025-06-30 20:37:44,033] [INFO] Instantiating GrokWrapper
+[2025-06-30 20:37:44,033] [ERROR] Unsupported LLM provider: unknown
+[2025-06-30 20:37:44,034] [INFO] Instantiating OpenAIWrapper
+[2025-06-30 20:37:44,039] [INFO] Instantiating OpenAIWrapper
+[2025-06-30 20:39:40,784] [INFO] Instantiating OpenAIWrapper
+[2025-06-30 20:39:40,803] [INFO] Initialized openai wrapper with model: gpt-4
+[2025-06-30 20:39:44,099] [INFO] Instantiating OpenAIWrapper
+[2025-06-30 20:39:44,100] [INFO] Instantiating ClaudeWrapper
+[2025-06-30 20:39:44,100] [INFO] Instantiating GeminiWrapper
+[2025-06-30 20:39:44,101] [INFO] Instantiating GrokWrapper
+[2025-06-30 20:39:44,101] [ERROR] Unsupported LLM provider: unknown
+[2025-06-30 20:39:44,102] [INFO] Instantiating OpenAIWrapper
+[2025-06-30 20:39:44,152] [INFO] Instantiating OpenAIWrapper
+[2025-06-30 20:53:06,178] [INFO] Instantiating OpenAIWrapper
+[2025-06-30 20:53:06,179] [INFO] Instantiating ClaudeWrapper
+[2025-06-30 20:53:06,179] [INFO] Instantiating GeminiWrapper
+[2025-06-30 20:53:06,180] [INFO] Instantiating GrokWrapper
+[2025-06-30 20:53:06,180] [ERROR] Unsupported LLM provider: unknown
+[2025-06-30 20:53:06,181] [INFO] Instantiating OpenAIWrapper
+[2025-06-30 20:53:06,187] [INFO] Instantiating OpenAIWrapper
+[2025-06-30 20:53:21,222] [INFO] Instantiating GrokWrapper
+[2025-06-30 20:53:21,245] [INFO] Initialized grok wrapper with model: grok-beta
+[2025-06-30 20:53:21,245] [INFO] Instantiating GrokWrapper
+[2025-06-30 20:53:21,249] [INFO] Initialized grok wrapper with model: grok-beta
+[2025-06-30 20:56:32,040] [INFO] Initialized grok wrapper with model: grok-beta
+[2025-06-30 20:56:35,393] [INFO] Instantiating GrokWrapper

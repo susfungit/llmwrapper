@@ -16,7 +16,11 @@ def get_llm(provider: str, config: dict):
         return GeminiWrapper(api_key=config["api_key"], model=config.get("model", "gemini-pro"))
     elif provider == "grok":
         logger.info("Instantiating GrokWrapper")
-        return GrokWrapper(api_key=config["api_key"], model=config.get("model", "grok-1"))
+        return GrokWrapper(
+            api_key=config["api_key"], 
+            model=config.get("model", "grok-beta"),
+            base_url=config.get("base_url", "https://api.x.ai/v1")
+        )
     else:
         logger.error(f"Unsupported LLM provider: {provider}")
         raise ValueError(f"Unsupported LLM provider: {provider}")

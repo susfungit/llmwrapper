@@ -106,6 +106,11 @@ def example_multiple_providers():
             "env_var": "GEMINI_API_KEY",
             "default_model": "gemini-pro", 
             "model_env": "GEMINI_MODEL"
+        },
+        "grok": {
+            "env_var": "XAI_API_KEY",
+            "default_model": "grok-beta",
+            "model_env": "GROK_MODEL"
         }
     }
     
@@ -141,7 +146,8 @@ def example_with_fallback_providers():
     provider_priority = [
         ("openai", "OPENAI_API_KEY", "gpt-4"),
         ("anthropic", "ANTHROPIC_API_KEY", "claude-3-sonnet-20240229"), 
-        ("gemini", "GEMINI_API_KEY", "gemini-pro")
+        ("gemini", "GEMINI_API_KEY", "gemini-pro"),
+        ("grok", "XAI_API_KEY", "grok-beta")
     ]
     
     message = [{"role": "user", "content": "What is machine learning?"}]
@@ -188,10 +194,15 @@ def print_setup_instructions():
     print("export GEMINI_API_KEY='your-gemini-api-key'")
     print("export GEMINI_MODEL='gemini-pro'  # Optional")
     print()
+    print("# For xAI Grok:")
+    print("export XAI_API_KEY='your-xai-api-key'")
+    print("export GROK_MODEL='grok-beta'  # Optional")
+    print()
     print("🔗 Get API keys from:")
     print("- OpenAI: https://platform.openai.com/api-keys")
     print("- Anthropic: https://console.anthropic.com/")
     print("- Google Gemini: https://makersuite.google.com/app/apikey")
+    print("- xAI Grok: https://console.x.ai/")
     print()
 
 
@@ -201,7 +212,7 @@ if __name__ == "__main__":
     
     # Check if any API keys are available
     available_keys = []
-    for key in ["OPENAI_API_KEY", "ANTHROPIC_API_KEY", "GEMINI_API_KEY"]:
+    for key in ["OPENAI_API_KEY", "ANTHROPIC_API_KEY", "GEMINI_API_KEY", "XAI_API_KEY"]:
         if os.getenv(key):
             available_keys.append(key)
     

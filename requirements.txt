@@ -6,6 +6,7 @@ google-genai>=0.1.0    # Updated Google Gemini API package
 # Development and Testing Dependencies
 pytest>=7.4.0
 pytest-mock>=3.10.0
+pytest-asyncio>=0.21.0  # For async testing support
 
 # Optional: Enhanced logging and utilities
 typing-extensions>=4.0.0  # For better type hints support

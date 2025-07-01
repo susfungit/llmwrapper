@@ -6,11 +6,13 @@ A vendor-agnostic Python wrapper for interacting with multiple Large Language Mo
 
 - **Unified Interface**: Single API to interact with multiple LLM providers
 - **Easy Provider Switching**: Change providers with minimal code changes
+- **⚡ Full Async Support**: High-performance concurrent operations with asyncio
+- **🚀 Concurrent Requests**: Make multiple API calls simultaneously for better performance
 - **Extensible**: Easy to add new providers by extending the base class
 - **Type Safety**: Full type hints for better development experience
 - **Enhanced Logging**: Comprehensive logging with provider/model identification, timing, and token usage
 - **Provider Initialization Logging**: Track wrapper instantiation and configuration
-- **Comprehensive Testing**: Full test coverage with pytest and advanced mocking
+- **Comprehensive Testing**: Full test coverage with pytest and advanced mocking (sync + async)
 - **Secure Configuration**: Environment variable and config file support
 - **Modern API Support**: Uses latest OpenAI SDK v1.0.0+ and Google Gemini API
 
@@ -131,6 +133,118 @@ for provider in providers:
     print(f"{provider}: {response}")
 ```
 
+## ⚡ Async Support
+
+The library includes full async support for high-performance concurrent operations:
+
+### Basic Async Usage
+```python
+import asyncio
+from async_factory import get_async_llm
+
+async def main():
+    # Create async LLM instance
+    llm = get_async_llm("openai", {
+        "api_key": "your-openai-api-key",
+        "model": "gpt-4"
+    })
+    
+    # Make async request
+    response = await llm.chat([
+        {"role": "user", "content": "What is async programming?"}
+    ])
+    print(response)
+
+# Run async function
+asyncio.run(main())
+```
+
+### Concurrent Requests to Multiple Providers
+```python
+import asyncio
+from async_factory import get_async_llm
+
+async def concurrent_requests():
+    # Create multiple async LLM instances
+    openai_llm = get_async_llm("openai", {"api_key": "key1", "model": "gpt-4"})
+    anthropic_llm = get_async_llm("anthropic", {"api_key": "key2", "model": "claude-3-opus-20240229"})
+    
+    # Make concurrent requests
+    question = [{"role": "user", "content": "What is 2+2?"}]
+    
+    # Both requests happen simultaneously
+    openai_response, anthropic_response = await asyncio.gather(
+        openai_llm.chat(question),
+        anthropic_llm.chat(question)
+    )
+    
+    print(f"OpenAI: {openai_response}")
+    print(f"Anthropic: {anthropic_response}")
+
+asyncio.run(concurrent_requests())
+```
+
+### Batch Processing Multiple Questions
+```python
+import asyncio
+from async_factory import get_async_llm
+
+async def batch_processing():
+    llm = get_async_llm("openai", {"api_key": "your-key", "model": "gpt-4"})
+    
+    questions = [
+        "What is the capital of France?",
+        "What is 10 + 15?",
+        "Name a programming language.",
+        "What color is the sky?",
+    ]
+    
+    # Process all questions concurrently
+    tasks = []
+    for question in questions:
+        task = llm.chat([{"role": "user", "content": question}])
+        tasks.append(task)
+    
+    # Wait for all responses
+    responses = await asyncio.gather(*tasks)
+    
+    for question, response in zip(questions, responses):
+        print(f"Q: {question}")
+        print(f"A: {response}\n")
+
+asyncio.run(batch_processing())
+```
+
+### Performance Benefits
+
+Async operations provide significant performance improvements for I/O-bound tasks:
+
+- **Concurrent Requests**: Make multiple API calls simultaneously instead of sequentially
+- **Better Resource Utilization**: Don't block while waiting for API responses
+- **Scalability**: Handle many requests with minimal resource overhead
+
+**Example Performance Comparison:**
+```
+Sequential (sync): 3 requests × 2 seconds each = 6 seconds total
+Concurrent (async): 3 requests simultaneously = ~2 seconds total
+```
+
+### Async Provider Support
+
+| Provider | Async Support | Implementation |
+|----------|---------------|----------------|
+| **OpenAI** | ✅ Full | `AsyncOpenAI` client |
+| **Anthropic** | ✅ Full | `AsyncAnthropic` client |
+| **Gemini** | ✅ Partial | Thread pool executor* |
+| **Grok** | ✅ Full | `AsyncOpenAI` client |
+
+*Gemini uses thread pool execution since the google-genai library doesn't have native async support yet.
+
+### Running Async Examples
+```bash
+python async_example_usage.py
+```
+
 ## 📊 Enhanced Logging & Monitoring
 
 The library includes comprehensive logging for monitoring API usage with enhanced provider identification:
@@ -165,19 +279,27 @@ export LLMWRAPPER_LOG_LEVEL=DEBUG  # Options: DEBUG, INFO, WARNING, ERROR
 ### Project Structure
 ```
 llmwrapper/
-├── base.py                 # Abstract base class
-├── openai_wrapper.py       # OpenAI implementation (modern SDK v1.0.0+)
-├── anthropic_wrapper.py    # Anthropic Claude implementation  
-├── gemini_wrapper.py       # Google Gemini implementation
-├── grok_wrapper.py         # Grok placeholder implementation
-├── factory.py              # Factory pattern for provider selection
-├── logger.py               # Logging configuration
-├── logging_mixin.py        # Logging functionality mixin
-├── example_usage.py        # Usage examples with security best practices
+├── base.py                      # Abstract base class
+├── async_base.py                # Abstract async base class
+├── openai_wrapper.py            # OpenAI sync implementation (modern SDK v1.0.0+)
+├── async_openai_wrapper.py      # OpenAI async implementation
+├── anthropic_wrapper.py         # Anthropic Claude sync implementation  
+├── async_anthropic_wrapper.py   # Anthropic Claude async implementation
+├── gemini_wrapper.py            # Google Gemini sync implementation
+├── async_gemini_wrapper.py      # Google Gemini async implementation
+├── grok_wrapper.py              # Grok sync implementation
+├── async_grok_wrapper.py        # Grok async implementation
+├── factory.py                   # Factory pattern for sync provider selection
+├── async_factory.py             # Factory pattern for async provider selection
+├── logger.py                    # Logging configuration
+├── logging_mixin.py             # Logging functionality mixin
+├── example_usage.py             # Sync usage examples with security best practices
+├── async_example_usage.py       # Async usage examples and performance demos
 ├── tests/
-│   └── test_llmwrapper.py  # Test suite
-├── requirements.txt        # Dependencies
-└── README.md              # This file
+│   ├── test_llmwrapper.py       # Sync test suite
+│   └── test_async_llmwrapper.py # Async test suite
+├── requirements.txt             # Dependencies (including async support)
+└── README.md                   # This file
 ```
 
 ### Adding New Providers

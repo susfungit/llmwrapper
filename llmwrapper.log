@@ -55,3 +55,112 @@
 [2025-06-30 20:53:21,249] [INFO] Initialized grok wrapper with model: grok-beta
 [2025-06-30 20:56:32,040] [INFO] Initialized grok wrapper with model: grok-beta
 [2025-06-30 20:56:35,393] [INFO] Instantiating GrokWrapper
+[2025-06-30 21:47:20,165] [INFO] Instantiating AsyncOpenAIWrapper
+[2025-06-30 21:47:20,190] [INFO] Initialized openai wrapper with model: gpt-4
+[2025-06-30 21:47:20,192] [INFO] Instantiating AsyncClaudeWrapper
+[2025-06-30 21:47:20,196] [INFO] Initialized anthropic wrapper with model: claude-3-opus-20240229
+[2025-06-30 21:47:20,196] [INFO] Instantiating AsyncGeminiWrapper
+[2025-06-30 21:47:20,204] [INFO] Initialized gemini wrapper with model: gemini-pro
+[2025-06-30 21:47:20,205] [INFO] Instantiating AsyncGrokWrapper
+[2025-06-30 21:47:20,209] [INFO] Initialized grok wrapper with model: grok-beta
+[2025-06-30 21:47:20,210] [ERROR] Unsupported async LLM provider: invalid_provider
+[2025-06-30 21:47:54,200] [INFO] Instantiating AsyncOpenAIWrapper
+[2025-06-30 21:47:54,219] [INFO] Initialized openai wrapper with model: gpt-4
+[2025-06-30 21:47:54,221] [INFO] Instantiating AsyncClaudeWrapper
+[2025-06-30 21:47:54,225] [INFO] Initialized anthropic wrapper with model: claude-3-opus-20240229
+[2025-06-30 21:47:54,226] [INFO] Instantiating AsyncGeminiWrapper
+[2025-06-30 21:47:54,234] [INFO] Initialized gemini wrapper with model: gemini-pro
+[2025-06-30 21:47:54,236] [INFO] Instantiating AsyncGrokWrapper
+[2025-06-30 21:47:54,240] [INFO] Initialized grok wrapper with model: grok-beta
+[2025-06-30 21:47:54,241] [ERROR] Unsupported async LLM provider: invalid_provider
+[2025-06-30 21:47:54,246] [INFO] Initialized openai wrapper with model: gpt-4
+[2025-06-30 21:47:54,273] [INFO] Initialized openai wrapper with model: gpt-4
+[2025-06-30 21:47:54,273] [INFO] Calling openai/gpt-4 with 2 message(s)
+[2025-06-30 21:47:54,273] [INFO] openai/gpt-4 response received in 0.00 seconds
+[2025-06-30 21:47:54,273] [INFO] openai - Prompt tokens: 10, Completion tokens: 8, Total: 18
+[2025-06-30 21:47:54,278] [INFO] Initialized anthropic wrapper with model: claude-3-opus-20240229
+[2025-06-30 21:47:54,281] [INFO] Initialized anthropic wrapper with model: claude-3-opus-20240229
+[2025-06-30 21:47:54,281] [INFO] Calling anthropic/claude-3-opus-20240229 with 2 message(s)
+[2025-06-30 21:47:54,281] [INFO] anthropic/claude-3-opus-20240229 response received in 0.00 seconds
+[2025-06-30 21:47:54,282] [INFO] anthropic - Prompt tokens: 12, Completion tokens: 9, Total: 21
+[2025-06-30 21:47:54,292] [INFO] Initialized gemini wrapper with model: gemini-pro
+[2025-06-30 21:47:54,296] [INFO] Initialized gemini wrapper with model: gemini-pro
+[2025-06-30 21:47:54,297] [INFO] Calling gemini/gemini-pro with 2 message(s)
+[2025-06-30 21:47:54,297] [INFO] gemini/gemini-pro response received in 0.00 seconds
+[2025-06-30 21:47:54,297] [INFO] gemini - Prompt tokens: 8, Completion tokens: 5, Total: 13
+[2025-06-30 21:47:54,302] [INFO] Initialized grok wrapper with model: grok-beta
+[2025-06-30 21:47:54,306] [INFO] Initialized grok wrapper with model: grok-beta
+[2025-06-30 21:47:54,306] [INFO] Calling grok/grok-beta with 2 message(s)
+[2025-06-30 21:47:54,306] [INFO] grok/grok-beta response received in 0.00 seconds
+[2025-06-30 21:47:54,306] [INFO] grok - Prompt tokens: 11, Completion tokens: 4, Total: 15
+[2025-06-30 21:47:54,310] [INFO] Initialized openai wrapper with model: gpt-4
+[2025-06-30 21:47:54,310] [INFO] Initialized anthropic wrapper with model: claude-3-opus-20240229
+[2025-06-30 21:47:54,311] [INFO] Calling openai/gpt-4 with 2 message(s)
+[2025-06-30 21:47:54,311] [INFO] openai/gpt-4 response received in 0.00 seconds
+[2025-06-30 21:47:54,311] [WARNING] openai - Token usage information not available.
+[2025-06-30 21:47:54,311] [INFO] Calling anthropic/claude-3-opus-20240229 with 2 message(s)
+[2025-06-30 21:47:54,311] [INFO] anthropic/claude-3-opus-20240229 response received in 0.00 seconds
+[2025-06-30 21:47:54,311] [WARNING] anthropic - Token usage information not available.
+[2025-06-30 21:47:54,314] [INFO] Initialized openai wrapper with model: gpt-4
+[2025-06-30 21:47:54,314] [INFO] Calling openai/gpt-4 with 2 message(s)
+[2025-06-30 21:48:05,480] [INFO] Instantiating OpenAIWrapper
+[2025-06-30 21:48:05,481] [INFO] Instantiating ClaudeWrapper
+[2025-06-30 21:48:05,481] [INFO] Instantiating GeminiWrapper
+[2025-06-30 21:48:05,482] [INFO] Instantiating GrokWrapper
+[2025-06-30 21:48:05,482] [ERROR] Unsupported LLM provider: unknown
+[2025-06-30 21:48:05,482] [INFO] Instantiating OpenAIWrapper
+[2025-06-30 21:48:05,489] [INFO] Instantiating OpenAIWrapper
+[2025-06-30 21:48:19,727] [INFO] Instantiating AsyncOpenAIWrapper
+[2025-06-30 21:48:19,790] [INFO] Initialized openai wrapper with model: gpt-4
+[2025-06-30 21:48:19,791] [INFO] Instantiating AsyncClaudeWrapper
+[2025-06-30 21:48:19,795] [INFO] Initialized anthropic wrapper with model: claude-3-opus-20240229
+[2025-06-30 21:48:19,796] [INFO] Instantiating AsyncGeminiWrapper
+[2025-06-30 21:48:19,804] [INFO] Initialized gemini wrapper with model: gemini-pro
+[2025-06-30 21:48:19,806] [INFO] Instantiating AsyncGrokWrapper
+[2025-06-30 21:48:19,810] [INFO] Initialized grok wrapper with model: grok-beta
+[2025-06-30 21:48:19,811] [ERROR] Unsupported async LLM provider: invalid_provider
+[2025-06-30 21:48:19,816] [INFO] Initialized openai wrapper with model: gpt-4
+[2025-06-30 21:48:19,823] [INFO] Initialized openai wrapper with model: gpt-4
+[2025-06-30 21:48:19,823] [INFO] Calling openai/gpt-4 with 2 message(s)
+[2025-06-30 21:48:19,823] [INFO] openai/gpt-4 response received in 0.00 seconds
+[2025-06-30 21:48:19,824] [INFO] openai - Prompt tokens: 10, Completion tokens: 8, Total: 18
+[2025-06-30 21:48:19,829] [INFO] Initialized anthropic wrapper with model: claude-3-opus-20240229
+[2025-06-30 21:48:19,832] [INFO] Initialized anthropic wrapper with model: claude-3-opus-20240229
+[2025-06-30 21:48:19,832] [INFO] Calling anthropic/claude-3-opus-20240229 with 2 message(s)
+[2025-06-30 21:48:19,832] [INFO] anthropic/claude-3-opus-20240229 response received in 0.00 seconds
+[2025-06-30 21:48:19,832] [INFO] anthropic - Prompt tokens: 12, Completion tokens: 9, Total: 21
+[2025-06-30 21:48:19,842] [INFO] Initialized gemini wrapper with model: gemini-pro
+[2025-06-30 21:48:19,848] [INFO] Initialized gemini wrapper with model: gemini-pro
+[2025-06-30 21:48:19,848] [INFO] Calling gemini/gemini-pro with 2 message(s)
+[2025-06-30 21:48:19,848] [INFO] gemini/gemini-pro response received in 0.00 seconds
+[2025-06-30 21:48:19,848] [INFO] gemini - Prompt tokens: 8, Completion tokens: 5, Total: 13
+[2025-06-30 21:48:19,854] [INFO] Initialized grok wrapper with model: grok-beta
+[2025-06-30 21:48:19,858] [INFO] Initialized grok wrapper with model: grok-beta
+[2025-06-30 21:48:19,858] [INFO] Calling grok/grok-beta with 2 message(s)
+[2025-06-30 21:48:19,858] [INFO] grok/grok-beta response received in 0.00 seconds
+[2025-06-30 21:48:19,858] [INFO] grok - Prompt tokens: 11, Completion tokens: 4, Total: 15
+[2025-06-30 21:48:19,862] [INFO] Initialized openai wrapper with model: gpt-4
+[2025-06-30 21:48:19,862] [INFO] Initialized anthropic wrapper with model: claude-3-opus-20240229
+[2025-06-30 21:48:19,862] [INFO] Calling openai/gpt-4 with 2 message(s)
+[2025-06-30 21:48:19,862] [INFO] openai/gpt-4 response received in 0.00 seconds
+[2025-06-30 21:48:19,863] [WARNING] openai - Token usage information not available.
+[2025-06-30 21:48:19,863] [INFO] Calling anthropic/claude-3-opus-20240229 with 2 message(s)
+[2025-06-30 21:48:19,863] [INFO] anthropic/claude-3-opus-20240229 response received in 0.00 seconds
+[2025-06-30 21:48:19,863] [WARNING] anthropic - Token usage information not available.
+[2025-06-30 21:48:19,865] [INFO] Initialized openai wrapper with model: gpt-4
+[2025-06-30 21:48:19,865] [INFO] Calling openai/gpt-4 with 2 message(s)
+[2025-06-30 21:48:19,871] [INFO] Instantiating OpenAIWrapper
+[2025-06-30 21:48:19,872] [INFO] Instantiating ClaudeWrapper
+[2025-06-30 21:48:19,872] [INFO] Instantiating GeminiWrapper
+[2025-06-30 21:48:19,873] [INFO] Instantiating GrokWrapper
+[2025-06-30 21:48:19,873] [ERROR] Unsupported LLM provider: unknown
+[2025-06-30 21:48:19,873] [INFO] Instantiating OpenAIWrapper
+[2025-06-30 21:48:19,879] [INFO] Instantiating OpenAIWrapper
+[2025-06-30 21:48:43,067] [INFO] Instantiating AsyncOpenAIWrapper
+[2025-06-30 21:48:43,090] [INFO] Initialized openai wrapper with model: gpt-4
+[2025-06-30 21:48:43,090] [INFO] Instantiating AsyncClaudeWrapper
+[2025-06-30 21:48:43,094] [INFO] Initialized anthropic wrapper with model: claude-3-opus-20240229
+[2025-06-30 21:48:43,094] [INFO] Instantiating AsyncGeminiWrapper
+[2025-06-30 21:48:43,102] [INFO] Initialized gemini wrapper with model: gemini-pro
+[2025-06-30 21:48:43,102] [INFO] Instantiating AsyncGrokWrapper
+[2025-06-30 21:48:43,106] [INFO] Initialized grok wrapper with model: grok-beta

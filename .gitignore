@@ -161,3 +161,6 @@ models/                     # Local model directory
 model_cache/                # Model cache directory
 .llama/                     # LLaMA configuration
 .local_models/              # Local model storage
+
+# Security recommendations
+SECURITY_RECOMMENDATIONS.md

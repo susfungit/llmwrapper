@@ -2,7 +2,9 @@ import anthropic
 from .async_base import AsyncBaseLLM
 from .logger import logger
 from .logging_mixin import LoggingMixin
+from .registry import register_async_provider
 
+@register_async_provider("anthropic", "claude-3-opus-20240229")
 class AsyncClaudeWrapper(AsyncBaseLLM, LoggingMixin):
     def __init__(self, api_key: str, model: str = "claude-3-opus-20240229"):
         self.client = anthropic.AsyncAnthropic(api_key=api_key)

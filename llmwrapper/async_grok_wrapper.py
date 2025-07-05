@@ -1,7 +1,9 @@
 from .async_base import AsyncBaseLLM
 from .logging_mixin import LoggingMixin
+from .registry import register_async_provider
 from openai import AsyncOpenAI
 
+@register_async_provider("grok", "grok-beta", base_url="https://api.x.ai/v1")
 class AsyncGrokWrapper(AsyncBaseLLM, LoggingMixin):
     def __init__(self, api_key: str, model: str = "grok-beta", base_url: str = "https://api.x.ai/v1"):
         """

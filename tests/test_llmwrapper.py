@@ -78,7 +78,8 @@ class TestBaseLLM:
 class TestFactory:
     """Test the factory pattern implementation"""
     
-    def test_factory_openai(self, monkeypatch):
+    def test_factory_openai(self):
+        """Test factory with OpenAI provider using registry mocking"""
         class MockOpenAIWrapper:
             def __init__(self, api_key, model):
                 self.api_key = api_key
@@ -86,16 +87,25 @@ class TestFactory:
                 self.provider = "openai"
             def chat(self, messages, **kwargs):
                 return "Mocked OpenAI response"
+        
+        # Mock the registry to return a fake provider info
+        mock_provider_info = {
+            'class': MockOpenAIWrapper,
+            'default_model': 'gpt-4',
+            'config': {}
+        }
+        
+        with patch('llmwrapper.registry.llm_registry.get_sync_provider') as mock_get_provider:
+            mock_get_provider.return_value = mock_provider_info
+            
+            config = {"api_key": "test", "model": "gpt-4"}
+            llm = get_llm("openai", config)
+            assert llm.chat([{"role": "user", "content": "Hi"}]) == "Mocked OpenAI response"
+            assert llm.model == "gpt-4"
+            assert llm.provider == "openai"
 
-        import llmwrapper.factory
-        monkeypatch.setattr(llmwrapper.factory, "OpenAIWrapper", MockOpenAIWrapper)
-        config = {"api_key": "test", "model": "gpt-4"}
-        llm = get_llm("openai", config)
-        assert llm.chat([{"role": "user", "content": "Hi"}]) == "Mocked OpenAI response"
-        assert llm.model == "gpt-4"
-        assert llm.provider == "openai"
-
-    def test_factory_anthropic(self, monkeypatch):
+    def test_factory_anthropic(self):
+        """Test factory with Anthropic provider using registry mocking"""
         class MockAnthropicWrapper:
             def __init__(self, api_key, model):
                 self.api_key = api_key
@@ -103,16 +113,24 @@ class TestFactory:
                 self.provider = "anthropic"
             def chat(self, messages, **kwargs):
                 return "Mocked Anthropic response"
+        
+        mock_provider_info = {
+            'class': MockAnthropicWrapper,
+            'default_model': 'claude-3-opus-20240229',
+            'config': {}
+        }
+        
+        with patch('llmwrapper.registry.llm_registry.get_sync_provider') as mock_get_provider:
+            mock_get_provider.return_value = mock_provider_info
+            
+            config = {"api_key": "test", "model": "claude-3-sonnet-20240229"}
+            llm = get_llm("anthropic", config)
+            assert llm.chat([{"role": "user", "content": "Hi"}]) == "Mocked Anthropic response"
+            assert llm.model == "claude-3-sonnet-20240229"
+            assert llm.provider == "anthropic"
 
-        import llmwrapper.factory
-        monkeypatch.setattr(llmwrapper.factory, "ClaudeWrapper", MockAnthropicWrapper)
-        config = {"api_key": "test", "model": "claude-3-sonnet-20240229"}
-        llm = get_llm("anthropic", config)
-        assert llm.chat([{"role": "user", "content": "Hi"}]) == "Mocked Anthropic response"
-        assert llm.model == "claude-3-sonnet-20240229"
-        assert llm.provider == "anthropic"
-
-    def test_factory_gemini(self, monkeypatch):
+    def test_factory_gemini(self):
+        """Test factory with Gemini provider using registry mocking"""
         class MockGeminiWrapper:
             def __init__(self, api_key, model):
                 self.api_key = api_key
@@ -120,16 +138,24 @@ class TestFactory:
                 self.provider = "gemini"
             def chat(self, messages, **kwargs):
                 return "Mocked Gemini response"
+        
+        mock_provider_info = {
+            'class': MockGeminiWrapper,
+            'default_model': 'gemini-pro',
+            'config': {}
+        }
+        
+        with patch('llmwrapper.registry.llm_registry.get_sync_provider') as mock_get_provider:
+            mock_get_provider.return_value = mock_provider_info
+            
+            config = {"api_key": "test", "model": "gemini-pro"}
+            llm = get_llm("gemini", config)
+            assert llm.chat([{"role": "user", "content": "Hi"}]) == "Mocked Gemini response"
+            assert llm.model == "gemini-pro"
+            assert llm.provider == "gemini"
 
-        import llmwrapper.factory
-        monkeypatch.setattr(llmwrapper.factory, "GeminiWrapper", MockGeminiWrapper)
-        config = {"api_key": "test", "model": "gemini-pro"}
-        llm = get_llm("gemini", config)
-        assert llm.chat([{"role": "user", "content": "Hi"}]) == "Mocked Gemini response"
-        assert llm.model == "gemini-pro"
-        assert llm.provider == "gemini"
-
-    def test_factory_grok(self, monkeypatch):
+    def test_factory_grok(self):
+        """Test factory with Grok provider using registry mocking"""
         class MockGrokWrapper:
             def __init__(self, api_key, model, base_url):
                 self.api_key = api_key
@@ -138,19 +164,26 @@ class TestFactory:
                 self.provider = "grok"
             def chat(self, messages, **kwargs):
                 return "Mocked Grok response"
-
-        import llmwrapper.factory
-        monkeypatch.setattr(llmwrapper.factory, "GrokWrapper", MockGrokWrapper)
-        config = {"api_key": "test", "model": "grok-beta", "base_url": "https://api.x.ai/v1"}
-        llm = get_llm("grok", config)
-        assert llm.chat([{"role": "user", "content": "Hi"}]) == "Mocked Grok response"
-        assert llm.model == "grok-beta"
-        assert llm.provider == "grok"
-        assert llm.base_url == "https://api.x.ai/v1"
+        
+        mock_provider_info = {
+            'class': MockGrokWrapper,
+            'default_model': 'grok-beta',
+            'config': {'base_url': 'https://api.x.ai/v1'}
+        }
+        
+        with patch('llmwrapper.registry.llm_registry.get_sync_provider') as mock_get_provider:
+            mock_get_provider.return_value = mock_provider_info
+            
+            config = {"api_key": "test", "model": "grok-beta", "base_url": "https://api.x.ai/v1"}
+            llm = get_llm("grok", config)
+            assert llm.chat([{"role": "user", "content": "Hi"}]) == "Mocked Grok response"
+            assert llm.model == "grok-beta"
+            assert llm.provider == "grok"
+            assert llm.base_url == "https://api.x.ai/v1"
 
     def test_factory_invalid_provider(self):
         config = {"api_key": "test"}
-        with pytest.raises(ValueError, match="Unsupported LLM provider"):
+        with pytest.raises(ValueError, match="Unsupported sync provider"):
             get_llm("unknown", config)
 
     def test_factory_default_models(self, monkeypatch):
@@ -340,13 +373,13 @@ class TestErrorHandling:
     
     def test_factory_logging_on_instantiation(self):
         """Test that factory logs provider instantiation"""
-        with patch('llmwrapper.factory.logger') as mock_logger, \
+        with patch('llmwrapper.registry.logger') as mock_logger, \
              patch('llmwrapper.factory.OpenAIWrapper') as mock_wrapper:
             
             config = {"api_key": "test", "model": "gpt-4"}
             get_llm("openai", config)
             
-            mock_logger.info.assert_called_with("Instantiating OpenAIWrapper")
+            mock_logger.info.assert_called_with("Instantiating OpenAIWrapper with model: gpt-4")
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])

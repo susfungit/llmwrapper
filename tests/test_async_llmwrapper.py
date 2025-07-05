@@ -49,8 +49,8 @@ class TestAsyncLLMWrappers:
     def test_get_async_llm_invalid_provider(self):
         """Test async factory with invalid provider"""
         config = {"api_key": "test-key"}
-        
-        with pytest.raises(ValueError, match="Unsupported async LLM provider"):
+
+        with pytest.raises(ValueError, match="Unsupported async provider"):
             get_async_llm("unknown", config)
 
     def test_async_openai_wrapper_init(self):

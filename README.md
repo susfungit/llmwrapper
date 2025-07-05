@@ -5,14 +5,15 @@ A vendor-agnostic Python wrapper for interacting with multiple Large Language Mo
 ## 🚀 Features
 
 - **Unified Interface**: Single API to interact with multiple LLM providers
+- **Registry Pattern**: Modern decorator-based provider registration system
 - **Easy Provider Switching**: Change providers with minimal code changes
 - **⚡ Full Async Support**: High-performance concurrent operations with asyncio
 - **🚀 Concurrent Requests**: Make multiple API calls simultaneously for better performance
-- **Extensible**: Easy to add new providers by extending the base class
+- **Extensible**: Easy to add new providers with decorators - no factory modifications needed
 - **Type Safety**: Full type hints for better development experience
 - **Enhanced Logging**: Comprehensive logging with provider/model identification, timing, and token usage
 - **Provider Initialization Logging**: Track wrapper instantiation and configuration
-- **Comprehensive Testing**: Full test coverage with pytest and advanced mocking (sync + async)
+- **Comprehensive Testing**: Full test coverage with pytest and advanced mocking (35 tests: 20 sync + 15 async)
 - **Secure Configuration**: Environment variable and config file support
 - **Modern API Support**: Uses latest OpenAI SDK v1.0.0+ and Google Gemini API
 
@@ -282,13 +283,28 @@ export LLMWRAPPER_LOG_LEVEL=DEBUG  # Options: DEBUG, INFO, WARNING, ERROR
 - Log file creation is optional (gracefully handles permission errors)
 - Provider-specific logging helps with debugging and monitoring multiple providers
 
-## 🏗️ Architecture
+## ��️ Architecture
+
+### Registry Pattern with Decorators
+The library uses a modern registry pattern with decorators for clean, extensible provider management:
+
+```python
+# Providers self-register using decorators
+@register_sync_provider("openai", "gpt-4")
+class OpenAIWrapper(BaseLLM, LoggingMixin):
+    # Implementation...
+
+@register_async_provider("anthropic", "claude-3-opus-20240229")
+class AsyncClaudeWrapper(AsyncBaseLLM, LoggingMixin):
+    # Implementation...
+```
 
 ### Project Structure
 ```
 llmwrapper/
 ├── base.py                      # Abstract base class
 ├── async_base.py                # Abstract async base class
+├── registry.py                  # Registry system with decorators
 ├── openai_wrapper.py            # OpenAI sync implementation (modern SDK v1.0.0+)
 ├── async_openai_wrapper.py      # OpenAI async implementation
 ├── anthropic_wrapper.py         # Anthropic Claude sync implementation  
@@ -312,19 +328,21 @@ llmwrapper/
 
 ### Adding New Providers
 
-To add a new LLM provider:
+To add a new LLM provider using the registry pattern:
 
-1. Create a new wrapper class extending `BaseLLM` and `LoggingMixin`:
+1. Create a new wrapper class with the decorator:
 ```python
-from base import BaseLLM
-from logging_mixin import LoggingMixin
+from .base import BaseLLM
+from .logging_mixin import LoggingMixin
+from .registry import register_sync_provider
 
+@register_sync_provider("new_provider", "default-model")
 class NewProviderWrapper(BaseLLM, LoggingMixin):
     def __init__(self, api_key: str, model: str):
         self.api_key = api_key
         self.model = model
-        self.provider = "new_provider"  # Define provider name
-        self.log_provider_init(self.provider, self.model)  # Log initialization
+        self.provider = "new_provider"
+        self.log_provider_init(self.provider, self.model)
     
     def chat(self, messages: list[dict], **kwargs) -> str:
         start = self.log_call_start(self.provider, self.model, len(messages))
@@ -339,15 +357,23 @@ class NewProviderWrapper(BaseLLM, LoggingMixin):
         return response.content
 ```
 
-2. Update `factory.py` to include your provider:
+2. For async providers, use the async decorator:
 ```python
-from new_provider_wrapper import NewProviderWrapper
+from .async_base import AsyncBaseLLM
+from .registry import register_async_provider
 
-def get_llm(provider: str, config: dict):
-    # ... existing providers ...
-    elif provider == "new_provider":
-        return NewProviderWrapper(api_key=config["api_key"], model=config.get("model", "default-model"))
+@register_async_provider("new_provider", "default-model")
+class AsyncNewProviderWrapper(AsyncBaseLLM, LoggingMixin):
+    # Async implementation...
 ```
+
+3. **No factory.py changes needed!** The registry pattern automatically handles provider registration.
+
+### Benefits of Registry Pattern
+- **Extensible**: Add providers without modifying factory code
+- **Clean**: No if/elif chains in factory functions
+- **Automatic**: Providers self-register when imported
+- **Type-Safe**: Decorator ensures proper provider configuration
 
 ## 🧪 Testing
 
@@ -366,20 +392,19 @@ pytest tests/test_llmwrapper.py
 ### Enhanced Test Coverage
 - **LoggingMixin functionality**: All logging methods with provider identification
 - **Base class functionality**: Abstract base class implementation
-- **Factory pattern**: Provider selection and default model handling
+- **Factory pattern**: Provider selection and default model handling with registry pattern
 - **Wrapper initialization**: Provider setup and logging verification
 - **Chat method testing**: API calls with comprehensive mocking
 - **Error handling**: Invalid providers and missing configuration
 - **Token usage logging**: Provider-specific usage tracking
 - **Provider instantiation logging**: Factory-level logging verification
+- **Async functionality**: Complete async test suite for all providers
+- **Concurrent operations**: Async batch processing and error handling
 
 ### Test Results
-All 20 tests passing with comprehensive coverage of:
-- 5 LoggingMixin tests
-- 6 Factory pattern tests  
-- 4 Wrapper initialization tests
-- 2 Chat method tests
-- 3 Error handling tests
+All 35 tests passing with comprehensive coverage of:
+- **20 Sync Tests**: LoggingMixin (5), Factory (6), Wrapper Init (4), Chat Methods (2), Error Handling (3)
+- **15 Async Tests**: Async factory (5), Async wrappers (8), Concurrent operations (1), Async error handling (1)
 
 ## 🔐 API Keys Setup
 
@@ -416,7 +441,10 @@ You'll need API keys from the respective providers:
 
 ## ✅ Recent Updates
 
-### **v2.0.0 - Enhanced Logging & Provider Management**
+### **v1.0.0 - Registry Pattern & Enhanced Architecture**
+- **✅ Registry Pattern Implementation**: Modern decorator-based provider registration system
+- **✅ Eliminated If/Elif Chains**: Clean, extensible provider management
+- **✅ 35 Comprehensive Tests**: Full test suite covering sync/async functionality
 - **✅ Enhanced Logging System**: Added provider identification to all log messages
 - **✅ Provider Initialization Logging**: Track wrapper instantiation and configuration
 - **✅ Improved Token Usage Logging**: Provider-specific token usage tracking for all providers

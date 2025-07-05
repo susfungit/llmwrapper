@@ -1,26 +1,28 @@
+from .registry import llm_registry
+from .logger import logger
+
+# Import all providers to ensure they're registered
 from .openai_wrapper import OpenAIWrapper
 from .anthropic_wrapper import ClaudeWrapper
 from .gemini_wrapper import GeminiWrapper
 from .grok_wrapper import GrokWrapper
-from .logger import logger
 
 def get_llm(provider: str, config: dict):
-    if provider == "openai":
-        logger.info("Instantiating OpenAIWrapper")
-        return OpenAIWrapper(api_key=config["api_key"], model=config.get("model", "gpt-4"))
-    elif provider == "anthropic":
-        logger.info("Instantiating ClaudeWrapper")
-        return ClaudeWrapper(api_key=config["api_key"], model=config.get("model", "claude-3-opus-20240229"))
-    elif provider == "gemini":
-        logger.info("Instantiating GeminiWrapper")
-        return GeminiWrapper(api_key=config["api_key"], model=config.get("model", "gemini-pro"))
-    elif provider == "grok":
-        logger.info("Instantiating GrokWrapper")
-        return GrokWrapper(
-            api_key=config["api_key"], 
-            model=config.get("model", "grok-beta"),
-            base_url=config.get("base_url", "https://api.x.ai/v1")
-        )
-    else:
-        logger.error(f"Unsupported LLM provider: {provider}")
-        raise ValueError(f"Unsupported LLM provider: {provider}")
+    """
+    Factory function to create LLM wrapper instances using the registry pattern.
+    
+    Args:
+        provider: Name of the LLM provider ('openai', 'anthropic', 'gemini', 'grok')
+        config: Configuration dictionary containing API keys and other settings
+        
+    Returns:
+        BaseLLM: An instance of the appropriate LLM wrapper
+        
+    Raises:
+        ValueError: If the provider is not supported
+    """
+    try:
+        return llm_registry.create_sync_llm(provider, config)
+    except ValueError as e:
+        logger.error(f"Failed to create LLM instance: {e}")
+        raise

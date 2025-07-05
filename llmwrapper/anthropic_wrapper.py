@@ -2,7 +2,9 @@ import anthropic
 from .base import BaseLLM
 from .logger import logger
 from .logging_mixin import LoggingMixin
+from .registry import register_sync_provider
 
+@register_sync_provider("anthropic", "claude-3-opus-20240229")
 class ClaudeWrapper(BaseLLM, LoggingMixin):
     def __init__(self, api_key: str, model: str = "claude-3-opus-20240229"):
         self.client = anthropic.Anthropic(api_key=api_key)

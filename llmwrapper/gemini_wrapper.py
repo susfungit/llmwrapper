@@ -3,7 +3,9 @@ from google.genai import types
 
 from .base import BaseLLM
 from .logging_mixin import LoggingMixin
+from .registry import register_sync_provider
 
+@register_sync_provider("gemini", "gemini-pro")
 class GeminiWrapper(BaseLLM, LoggingMixin):
     def __init__(self, api_key: str, model: str = "gemini-pro"):
         self.client = genai.Client(api_key=api_key)

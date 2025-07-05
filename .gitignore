@@ -147,3 +147,6 @@ twine-upload.log
 
 # Internal development documentation
 PYPI_READINESS_REPORT.md
+
+# Benchmarking artifacts
+.benchmarks/

@@ -2,7 +2,9 @@ from openai import OpenAI
 from .base import BaseLLM
 from .logger import logger
 from .logging_mixin import LoggingMixin
+from .registry import register_sync_provider
 
+@register_sync_provider("openai", "gpt-4")
 class OpenAIWrapper(BaseLLM, LoggingMixin):
     def __init__(self, api_key: str, model: str = "gpt-4"):
         self.client = OpenAI(api_key=api_key)

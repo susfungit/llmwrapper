@@ -1,7 +1,9 @@
 from .base import BaseLLM
 from .logging_mixin import LoggingMixin
+from .registry import register_sync_provider
 from openai import OpenAI
 
+@register_sync_provider("grok", "grok-beta", base_url="https://api.x.ai/v1")
 class GrokWrapper(BaseLLM, LoggingMixin):
     def __init__(self, api_key: str, model: str = "grok-beta", base_url: str = "https://api.x.ai/v1"):
         """

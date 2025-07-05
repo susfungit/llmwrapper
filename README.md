@@ -19,13 +19,21 @@ A vendor-agnostic Python wrapper for interacting with multiple Large Language Mo
 ## 🔧 Installation
 
 ```bash
-pip install -r requirements.txt
+pip install llmwrapper
+```
+
+For development installation:
+
+```bash
+git clone https://github.com/yourusername/llmwrapper.git
+cd llmwrapper
+pip install -e .
 ```
 
 ## 🚀 Quick Start
 
 ```python
-from factory import get_llm
+from llmwrapper import get_llm
 
 # OpenAI Example
 config = {
@@ -93,7 +101,7 @@ llm = get_llm("grok", config)
 
 ### Basic Chat
 ```python
-from factory import get_llm
+from llmwrapper import get_llm
 
 # Initialize any provider
 llm = get_llm("anthropic", {
@@ -140,7 +148,7 @@ The library includes full async support for high-performance concurrent operatio
 ### Basic Async Usage
 ```python
 import asyncio
-from async_factory import get_async_llm
+from llmwrapper import get_async_llm
 
 async def main():
     # Create async LLM instance
@@ -162,7 +170,7 @@ asyncio.run(main())
 ### Concurrent Requests to Multiple Providers
 ```python
 import asyncio
-from async_factory import get_async_llm
+from llmwrapper import get_async_llm
 
 async def concurrent_requests():
     # Create multiple async LLM instances
@@ -187,7 +195,7 @@ asyncio.run(concurrent_requests())
 ### Batch Processing Multiple Questions
 ```python
 import asyncio
-from async_factory import get_async_llm
+from llmwrapper import get_async_llm
 
 async def batch_processing():
     llm = get_async_llm("openai", {"api_key": "your-key", "model": "gpt-4"})

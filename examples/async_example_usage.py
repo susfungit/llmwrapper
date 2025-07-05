@@ -1,7 +1,7 @@
 import asyncio
 import json
 import time
-from async_factory import get_async_llm
+from llmwrapper import get_async_llm
 
 async def async_single_request_example():
     """Example of making a single async request"""
@@ -142,7 +142,7 @@ async def compare_sync_vs_async():
         config = json.load(f)
     
     # Note: This example requires importing the sync factory as well
-    # from factory import get_llm
+# from llmwrapper import get_llm
     
     print("For a true comparison, you would:")
     print("1. Make 3 sequential sync requests (sync_time)")

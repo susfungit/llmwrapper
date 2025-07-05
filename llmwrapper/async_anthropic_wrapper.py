@@ -1,7 +1,7 @@
 import anthropic
-from async_base import AsyncBaseLLM
-from logger import logger
-from logging_mixin import LoggingMixin
+from .async_base import AsyncBaseLLM
+from .logger import logger
+from .logging_mixin import LoggingMixin
 
 class AsyncClaudeWrapper(AsyncBaseLLM, LoggingMixin):
     def __init__(self, api_key: str, model: str = "claude-3-opus-20240229"):

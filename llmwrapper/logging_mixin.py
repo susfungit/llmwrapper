@@ -1,5 +1,5 @@
 import time
-from logger import logger
+from .logger import logger
 
 class LoggingMixin:
     def log_call_start(self, provider: str, model_name: str, message_count: int):

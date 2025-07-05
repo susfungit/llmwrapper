@@ -7,9 +7,7 @@ import time
 # Add the parent directory to the path so we can import the modules
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-from base import BaseLLM
-from factory import get_llm
-from logging_mixin import LoggingMixin
+from llmwrapper import BaseLLM, get_llm, LoggingMixin
 
 class DummyLLM(BaseLLM):
     def chat(self, messages: list[dict], **kwargs) -> str:
@@ -21,7 +19,7 @@ class TestLoggingMixin:
     def setup_method(self):
         self.mixin = LoggingMixin()
     
-    @patch('logging_mixin.logger')
+    @patch('llmwrapper.logging_mixin.logger')
     def test_log_call_start(self, mock_logger):
         start_time = self.mixin.log_call_start("openai", "gpt-4", 2)
         
@@ -29,7 +27,7 @@ class TestLoggingMixin:
         assert isinstance(start_time, float)
         assert start_time <= time.time()
     
-    @patch('logging_mixin.logger')
+    @patch('llmwrapper.logging_mixin.logger')
     def test_log_call_end(self, mock_logger):
         start_time = time.time() - 1.5  # Simulate 1.5 seconds ago
         self.mixin.log_call_end("anthropic", "claude-3-sonnet", start_time)
@@ -39,7 +37,7 @@ class TestLoggingMixin:
         assert "anthropic/claude-3-sonnet response received in" in call_args
         assert "seconds" in call_args
     
-    @patch('logging_mixin.logger')
+    @patch('llmwrapper.logging_mixin.logger')
     def test_log_token_usage_with_usage(self, mock_logger):
         usage = {
             "prompt_tokens": 10,
@@ -52,7 +50,7 @@ class TestLoggingMixin:
             "openai - Prompt tokens: 10, Completion tokens: 20, Total: 30"
         )
     
-    @patch('logging_mixin.logger')
+    @patch('llmwrapper.logging_mixin.logger')
     def test_log_token_usage_without_usage(self, mock_logger):
         self.mixin.log_token_usage("gemini", {})
         
@@ -60,7 +58,7 @@ class TestLoggingMixin:
             "gemini - Token usage information not available."
         )
     
-    @patch('logging_mixin.logger')
+    @patch('llmwrapper.logging_mixin.logger')
     def test_log_provider_init(self, mock_logger):
         self.mixin.log_provider_init("openai", "gpt-4")
         
@@ -89,8 +87,8 @@ class TestFactory:
             def chat(self, messages, **kwargs):
                 return "Mocked OpenAI response"
 
-        import factory
-        monkeypatch.setattr(factory, "OpenAIWrapper", MockOpenAIWrapper)
+        import llmwrapper.factory
+        monkeypatch.setattr(llmwrapper.factory, "OpenAIWrapper", MockOpenAIWrapper)
         config = {"api_key": "test", "model": "gpt-4"}
         llm = get_llm("openai", config)
         assert llm.chat([{"role": "user", "content": "Hi"}]) == "Mocked OpenAI response"
@@ -106,8 +104,8 @@ class TestFactory:
             def chat(self, messages, **kwargs):
                 return "Mocked Anthropic response"
 
-        import factory
-        monkeypatch.setattr(factory, "ClaudeWrapper", MockAnthropicWrapper)
+        import llmwrapper.factory
+        monkeypatch.setattr(llmwrapper.factory, "ClaudeWrapper", MockAnthropicWrapper)
         config = {"api_key": "test", "model": "claude-3-sonnet-20240229"}
         llm = get_llm("anthropic", config)
         assert llm.chat([{"role": "user", "content": "Hi"}]) == "Mocked Anthropic response"
@@ -123,8 +121,8 @@ class TestFactory:
             def chat(self, messages, **kwargs):
                 return "Mocked Gemini response"
 
-        import factory
-        monkeypatch.setattr(factory, "GeminiWrapper", MockGeminiWrapper)
+        import llmwrapper.factory
+        monkeypatch.setattr(llmwrapper.factory, "GeminiWrapper", MockGeminiWrapper)
         config = {"api_key": "test", "model": "gemini-pro"}
         llm = get_llm("gemini", config)
         assert llm.chat([{"role": "user", "content": "Hi"}]) == "Mocked Gemini response"
@@ -141,8 +139,8 @@ class TestFactory:
             def chat(self, messages, **kwargs):
                 return "Mocked Grok response"
 
-        import factory
-        monkeypatch.setattr(factory, "GrokWrapper", MockGrokWrapper)
+        import llmwrapper.factory
+        monkeypatch.setattr(llmwrapper.factory, "GrokWrapper", MockGrokWrapper)
         config = {"api_key": "test", "model": "grok-beta", "base_url": "https://api.x.ai/v1"}
         llm = get_llm("grok", config)
         assert llm.chat([{"role": "user", "content": "Hi"}]) == "Mocked Grok response"
@@ -161,8 +159,8 @@ class TestFactory:
             def __init__(self, api_key, model):
                 self.model = model
         
-        import factory
-        monkeypatch.setattr(factory, "OpenAIWrapper", MockWrapper)
+        import llmwrapper.factory
+        monkeypatch.setattr(llmwrapper.factory, "OpenAIWrapper", MockWrapper)
         
         config = {"api_key": "test"}  # No model specified
         llm = get_llm("openai", config)
@@ -173,10 +171,10 @@ class TestWrapperInitialization:
 
     def test_openai_wrapper_initialization(self):
         """Test that OpenAI wrapper can be initialized with proper parameters"""
-        from openai_wrapper import OpenAIWrapper
+        from llmwrapper.openai_wrapper import OpenAIWrapper
         
         # Mock the OpenAI client to avoid actual API calls
-        with patch('openai_wrapper.OpenAI') as mock_openai:
+        with patch('llmwrapper.openai_wrapper.OpenAI') as mock_openai:
             mock_client = Mock()
             mock_openai.return_value = mock_client
             
@@ -190,9 +188,9 @@ class TestWrapperInitialization:
 
     def test_anthropic_wrapper_initialization(self):
         """Test that Anthropic wrapper can be initialized with proper parameters"""
-        from anthropic_wrapper import ClaudeWrapper
+        from llmwrapper.anthropic_wrapper import ClaudeWrapper
         
-        with patch('anthropic_wrapper.anthropic.Anthropic') as mock_anthropic:
+        with patch('llmwrapper.anthropic_wrapper.anthropic.Anthropic') as mock_anthropic:
             mock_client = Mock()
             mock_anthropic.return_value = mock_client
             
@@ -206,9 +204,9 @@ class TestWrapperInitialization:
 
     def test_gemini_wrapper_initialization(self):
         """Test that Gemini wrapper can be initialized with proper parameters"""
-        from gemini_wrapper import GeminiWrapper
+        from llmwrapper.gemini_wrapper import GeminiWrapper
         
-        with patch('gemini_wrapper.genai.Client') as mock_genai:
+        with patch('llmwrapper.gemini_wrapper.genai.Client') as mock_genai:
             mock_client = Mock()
             mock_genai.return_value = mock_client
             
@@ -222,9 +220,9 @@ class TestWrapperInitialization:
 
     def test_grok_wrapper_initialization(self):
         """Test that Grok wrapper can be initialized with proper parameters"""
-        from grok_wrapper import GrokWrapper
+        from llmwrapper.grok_wrapper import GrokWrapper
         
-        with patch('grok_wrapper.OpenAI') as mock_openai:
+        with patch('llmwrapper.grok_wrapper.OpenAI') as mock_openai:
             mock_client = Mock()
             mock_openai.return_value = mock_client
             
@@ -248,7 +246,7 @@ class TestWrapperChatMethods:
 
     def test_openai_chat_method(self):
         """Test OpenAI chat method with logging"""
-        from openai_wrapper import OpenAIWrapper
+        from llmwrapper.openai_wrapper import OpenAIWrapper
         
         # Mock response structure
         mock_usage = Mock()
@@ -266,7 +264,7 @@ class TestWrapperChatMethods:
         mock_response.choices = [mock_choice]
         mock_response.usage = mock_usage
         
-        with patch('openai_wrapper.OpenAI') as mock_openai_class:
+        with patch('llmwrapper.openai_wrapper.OpenAI') as mock_openai_class:
             mock_client = Mock()
             mock_client.chat.completions.create.return_value = mock_response
             mock_openai_class.return_value = mock_client
@@ -287,7 +285,7 @@ class TestWrapperChatMethods:
 
     def test_grok_chat_method(self):
         """Test Grok chat method with proper API mocking"""
-        from grok_wrapper import GrokWrapper
+        from llmwrapper.grok_wrapper import GrokWrapper
         
         # Mock response structure (same as OpenAI since Grok uses compatible API)
         mock_usage = Mock()
@@ -305,7 +303,7 @@ class TestWrapperChatMethods:
         mock_response.choices = [mock_choice]
         mock_response.usage = mock_usage
         
-        with patch('grok_wrapper.OpenAI') as mock_openai_class:
+        with patch('llmwrapper.grok_wrapper.OpenAI') as mock_openai_class:
             mock_client = Mock()
             mock_client.chat.completions.create.return_value = mock_response
             mock_openai_class.return_value = mock_client
@@ -342,8 +340,8 @@ class TestErrorHandling:
     
     def test_factory_logging_on_instantiation(self):
         """Test that factory logs provider instantiation"""
-        with patch('factory.logger') as mock_logger, \
-             patch('factory.OpenAIWrapper') as mock_wrapper:
+        with patch('llmwrapper.factory.logger') as mock_logger, \
+             patch('llmwrapper.factory.OpenAIWrapper') as mock_wrapper:
             
             config = {"api_key": "test", "model": "gpt-4"}
             get_llm("openai", config)

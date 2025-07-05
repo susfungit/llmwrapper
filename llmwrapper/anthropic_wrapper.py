@@ -1,7 +1,7 @@
 import anthropic
-from base import BaseLLM
-from logger import logger
-from logging_mixin import LoggingMixin
+from .base import BaseLLM
+from .logger import logger
+from .logging_mixin import LoggingMixin
 
 class ClaudeWrapper(BaseLLM, LoggingMixin):
     def __init__(self, api_key: str, model: str = "claude-3-opus-20240229"):

@@ -1,0 +1,14 @@
+include README.md
+include LICENSE
+include requirements.txt
+include pyproject.toml
+include llmwrapper/*.json
+recursive-include llmwrapper *.py
+recursive-exclude * __pycache__
+recursive-exclude * *.py[co]
+exclude .gitignore
+exclude pytest.ini
+exclude *.log
+exclude .DS_Store
+exclude examples/*
+exclude tests/* 

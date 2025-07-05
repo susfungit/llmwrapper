@@ -1,8 +1,8 @@
-from openai_wrapper import OpenAIWrapper
-from anthropic_wrapper import ClaudeWrapper
-from gemini_wrapper import GeminiWrapper
-from grok_wrapper import GrokWrapper
-from logger import logger
+from .openai_wrapper import OpenAIWrapper
+from .anthropic_wrapper import ClaudeWrapper
+from .gemini_wrapper import GeminiWrapper
+from .grok_wrapper import GrokWrapper
+from .logger import logger
 
 def get_llm(provider: str, config: dict):
     if provider == "openai":

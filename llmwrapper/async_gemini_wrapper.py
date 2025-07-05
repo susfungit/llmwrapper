@@ -3,8 +3,8 @@ from concurrent.futures import ThreadPoolExecutor
 from google import genai
 from google.genai import types
 
-from async_base import AsyncBaseLLM
-from logging_mixin import LoggingMixin
+from .async_base import AsyncBaseLLM
+from .logging_mixin import LoggingMixin
 
 class AsyncGeminiWrapper(AsyncBaseLLM, LoggingMixin):
     def __init__(self, api_key: str, model: str = "gemini-pro"):

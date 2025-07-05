@@ -1,5 +1,5 @@
-from base import BaseLLM
-from logging_mixin import LoggingMixin
+from .base import BaseLLM
+from .logging_mixin import LoggingMixin
 from openai import OpenAI
 
 class GrokWrapper(BaseLLM, LoggingMixin):

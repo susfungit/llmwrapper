@@ -6,6 +6,7 @@ from llmwrapper.async_openai_wrapper import AsyncOpenAIWrapper
 from llmwrapper.async_anthropic_wrapper import AsyncClaudeWrapper
 from llmwrapper.async_gemini_wrapper import AsyncGeminiWrapper
 from llmwrapper.async_grok_wrapper import AsyncGrokWrapper
+from llmwrapper.security_utils import SecurityUtils
 
 class TestAsyncLLMWrappers:
     """Test the async LLM wrapper implementations"""

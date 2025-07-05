@@ -8,6 +8,7 @@ import time
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 from llmwrapper import BaseLLM, get_llm, LoggingMixin
+from llmwrapper.security_utils import SecurityUtils
 
 class DummyLLM(BaseLLM):
     def chat(self, messages: list[dict], **kwargs) -> str:
@@ -225,7 +226,7 @@ class TestFactory:
         import llmwrapper.factory
         monkeypatch.setattr(llmwrapper.factory, "OpenAIWrapper", MockWrapper)
         
-        config = {"api_key": "test"}  # No model specified
+        config = {"api_key": "sk-1234567890abcdef1234567890abcdef"}  # No model specified
         llm = get_llm("openai", config)
         assert llm.model == "gpt-4"  # Should use default
 
@@ -242,7 +243,7 @@ class TestWrapperInitialization:
             mock_openai.return_value = mock_client
             
             with patch.object(LoggingMixin, 'log_provider_init') as mock_log:
-                wrapper = OpenAIWrapper(api_key="test-key", model="gpt-4")
+                wrapper = OpenAIWrapper(api_key="sk-1234567890abcdef1234567890abcdef", model="gpt-4")
                 
                 assert wrapper.model == "gpt-4"
                 assert wrapper.provider == "openai"
@@ -372,7 +373,7 @@ class TestWrapperChatMethods:
                  patch.object(LoggingMixin, 'log_token_usage') as mock_usage_log, \
                  patch.object(LoggingMixin, 'log_provider_init'):
                 
-                wrapper = OpenAIWrapper(api_key="test-key", model="gpt-4")
+                wrapper = OpenAIWrapper(api_key="sk-1234567890abcdef1234567890abcdef", model="gpt-4")
                 messages = [{"role": "user", "content": "Hello"}]
                 response = wrapper.chat(messages)
                 
@@ -543,10 +544,118 @@ class TestErrorHandling:
         with patch('llmwrapper.registry.logger') as mock_logger, \
              patch('llmwrapper.factory.OpenAIWrapper') as mock_wrapper:
             
-            config = {"api_key": "test", "model": "gpt-4"}
+            config = {"api_key": "sk-1234567890abcdef1234567890abcdef", "model": "gpt-4"}
             get_llm("openai", config)
             
             mock_logger.info.assert_called_with("Instantiating OpenAIWrapper with model: gpt-4")
+
+
+class TestSecurityFeatures:
+    """Test security features integration with existing functionality"""
+    
+    def test_security_utils_api_key_validation(self):
+        """Test API key validation for different providers"""
+        from llmwrapper.security_utils import SecurityUtils
+        
+        # Test valid keys
+        assert SecurityUtils.validate_api_key("sk-1234567890abcdef1234567890abcdef", "openai")
+        assert SecurityUtils.validate_api_key("sk-ant-api03-abcdef1234567890abcdef1234567890", "anthropic")
+        assert SecurityUtils.validate_api_key("AIzaSyDabcdef1234567890abcdef1234567890", "gemini")
+        assert SecurityUtils.validate_api_key("xai-abcdef1234567890abcdef1234567890", "grok")
+        assert SecurityUtils.validate_api_key(None, "ollama")
+        
+        # Test invalid keys
+        assert not SecurityUtils.validate_api_key("invalid-key", "openai")
+        assert not SecurityUtils.validate_api_key("sk-wrong-format", "anthropic")
+        assert not SecurityUtils.validate_api_key("short", "gemini")
+        assert not SecurityUtils.validate_api_key("any-key", "ollama")
+    
+    def test_security_utils_message_validation(self):
+        """Test message validation functionality"""
+        from llmwrapper.security_utils import SecurityUtils
+        
+        # Valid messages
+        valid_messages = [
+            [{"role": "user", "content": "Hello, world!"}],
+            [{"role": "system", "content": "You are helpful"}],
+            [{"role": "assistant", "content": "I'm here to help"}]
+        ]
+        
+        for messages in valid_messages:
+            assert SecurityUtils.validate_messages(messages)
+        
+        # Invalid messages
+        invalid_messages = [
+            "not a list",
+            [{"content": "Missing role"}],
+            [{"role": "invalid", "content": "Bad role"}],
+            [{"role": "user", "content": "<script>alert('xss')</script>"}],
+            [{"role": "user", "content": "eval(malicious_code)"}]
+        ]
+        
+        for messages in invalid_messages:
+            assert not SecurityUtils.validate_messages(messages)
+    
+    def test_security_utils_data_masking(self):
+        """Test sensitive data masking"""
+        from llmwrapper.security_utils import SecurityUtils
+        
+        sensitive_data = {
+            "api_key": "sk-1234567890abcdef1234567890abcdef",
+            "password": "secret123",
+            "safe_field": "this is safe"
+        }
+        
+        masked = SecurityUtils.mask_sensitive_data(sensitive_data)
+        
+        assert "sk-***" in str(masked["api_key"])
+        assert "***" in str(masked["password"])
+        assert masked["safe_field"] == "this is safe"
+    
+    def test_openai_wrapper_security_validation(self):
+        """Test OpenAI wrapper security features"""
+        # Test API key validation
+        with pytest.raises(ValueError, match="Invalid OpenAI API key format"):
+            from llmwrapper.openai_wrapper import OpenAIWrapper
+            OpenAIWrapper("invalid-key", "gpt-4")
+        
+        # Test with valid key format (mocked OpenAI client)
+        with patch('llmwrapper.openai_wrapper.OpenAI'):
+            wrapper = OpenAIWrapper("sk-1234567890abcdef1234567890abcdef", "gpt-4")
+            assert wrapper.model == "gpt-4"
+    
+    def test_ollama_wrapper_security_validation(self):
+        """Test Ollama wrapper security features"""
+        # Test API key validation (should be None)
+        with pytest.raises(ValueError, match="Invalid API key for Ollama"):
+            from llmwrapper.ollama_wrapper import OllamaWrapper
+            with patch('llmwrapper.ollama_wrapper.requests.get'):
+                OllamaWrapper("llama3", "http://localhost:11434", "should-be-none")
+        
+        # Test URL validation
+        with pytest.raises(ValueError, match="Invalid Ollama base URL format"):
+            from llmwrapper.ollama_wrapper import OllamaWrapper
+            OllamaWrapper("llama3", "invalid-url", None)
+    
+    @patch('llmwrapper.security_utils.logger')
+    def test_security_event_logging(self, mock_logger):
+        """Test security event logging"""
+        from llmwrapper.security_utils import SecurityUtils
+        
+        event_details = {
+            "api_key": "sk-1234567890abcdef1234567890abcdef",
+            "provider": "openai",
+            "action": "test_action"
+        }
+        
+        SecurityUtils.log_security_event("TEST_EVENT", event_details)
+        
+        mock_logger.warning.assert_called_once()
+        call_args = mock_logger.warning.call_args[0][0]
+        assert "SECURITY EVENT - TEST_EVENT" in call_args
+        # Should contain masked API key
+        assert "sk-1***cdef" in call_args or "***" in call_args
+
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])

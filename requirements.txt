@@ -3,9 +3,9 @@ openai>=1.0.0              # OpenAI GPT models (modern SDK v1.0.0+)
 anthropic>=0.3.11          # Anthropic Claude models
 google-genai>=0.1.0        # Google Gemini models (updated API package)
 
-# Local LLM Provider Dependencies
-requests>=2.31.0           # HTTP client for Ollama sync operations  
-aiohttp>=3.8.0             # Async HTTP client for Ollama async operations
+# Local LLM Provider Dependencies (Security Updated)
+requests>=2.32.5           # HTTP client for Ollama sync operations (fixes CVE-2024-47081)
+aiohttp>=3.8.6             # Async HTTP client for Ollama async operations (fixes CVE-2023-47641)
 
 # Development and Testing Dependencies
 pytest>=7.4.0             # Testing framework
@@ -14,6 +14,15 @@ pytest-asyncio>=0.21.0    # Async testing support
 
 # Enhanced Development Experience
 typing-extensions>=4.0.0  # Better type hints support for older Python versions
+
+# Security Dependencies (Enterprise Security Features)
+urllib3>=2.0.0             # Secure URL handling (transitive dependency update)
+# Note: All security features use only Python standard library modules:
+# - re (regex patterns for credential masking)
+# - json (data serialization for security logging)
+# - logging (secure logging implementation)
+# - urllib.parse (URL validation)
+# - time (security event timestamps)
 
 # Note: Ollama requires separate installation:
 # curl -fsSL https://ollama.ai/install.sh | sh

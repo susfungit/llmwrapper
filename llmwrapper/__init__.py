@@ -6,6 +6,7 @@ This package provides a unified interface to interact with:
 - Anthropic Claude models
 - Google Gemini models
 - Grok (xAI) models
+- Ollama (local LLM models)
 
 Both synchronous and asynchronous operations are supported.
 """
@@ -25,12 +26,14 @@ from .openai_wrapper import OpenAIWrapper
 from .anthropic_wrapper import ClaudeWrapper
 from .gemini_wrapper import GeminiWrapper
 from .grok_wrapper import GrokWrapper
+from .ollama_wrapper import OllamaWrapper
 
 # Import async wrapper classes
 from .async_openai_wrapper import AsyncOpenAIWrapper
 from .async_anthropic_wrapper import AsyncClaudeWrapper
 from .async_gemini_wrapper import AsyncGeminiWrapper
 from .async_grok_wrapper import AsyncGrokWrapper
+from .async_ollama_wrapper import AsyncOllamaWrapper
 
 # Import utilities
 from .logger import logger
@@ -53,12 +56,14 @@ __all__ = [
     "ClaudeWrapper", 
     "GeminiWrapper",
     "GrokWrapper",
+    "OllamaWrapper",
     
     # Async wrapper classes
     "AsyncOpenAIWrapper",
     "AsyncClaudeWrapper",
     "AsyncGeminiWrapper", 
     "AsyncGrokWrapper",
+    "AsyncOllamaWrapper",
     
     # Utilities
     "logger",

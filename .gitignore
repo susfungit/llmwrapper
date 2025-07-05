@@ -150,3 +150,13 @@ PYPI_READINESS_REPORT.md
 
 # Benchmarking artifacts
 .benchmarks/
+
+# Ollama / Local LLM specific
+.ollama/                    # Ollama configuration directory
+ollama_models/              # Downloaded model storage
+*.gguf                      # Model files
+*.ggml                      # Model files
+models/                     # Local model directory
+model_cache/                # Model cache directory
+.llama/                     # LLaMA configuration
+.local_models/              # Local model storage

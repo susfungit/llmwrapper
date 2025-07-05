@@ -1,12 +1,21 @@
-# Core LLM Provider Dependencies
-openai>=1.0.0
-anthropic>=0.3.11
-google-genai>=0.1.0    # Updated Google Gemini API package
+# Core Cloud LLM Provider Dependencies
+openai>=1.0.0              # OpenAI GPT models (modern SDK v1.0.0+)
+anthropic>=0.3.11          # Anthropic Claude models
+google-genai>=0.1.0        # Google Gemini models (updated API package)
+
+# Local LLM Provider Dependencies
+requests>=2.31.0           # HTTP client for Ollama sync operations  
+aiohttp>=3.8.0             # Async HTTP client for Ollama async operations
 
 # Development and Testing Dependencies
-pytest>=7.4.0
-pytest-mock>=3.10.0
-pytest-asyncio>=0.21.0  # For async testing support
+pytest>=7.4.0             # Testing framework
+pytest-mock>=3.10.0       # Advanced mocking for tests
+pytest-asyncio>=0.21.0    # Async testing support
 
-# Optional: Enhanced logging and utilities
-typing-extensions>=4.0.0  # For better type hints support
+# Enhanced Development Experience
+typing-extensions>=4.0.0  # Better type hints support for older Python versions
+
+# Note: Ollama requires separate installation:
+# curl -fsSL https://ollama.ai/install.sh | sh
+# ollama serve
+# ollama pull llama3

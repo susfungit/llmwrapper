@@ -6,13 +6,14 @@ from .async_openai_wrapper import AsyncOpenAIWrapper
 from .async_anthropic_wrapper import AsyncClaudeWrapper
 from .async_gemini_wrapper import AsyncGeminiWrapper
 from .async_grok_wrapper import AsyncGrokWrapper
+from .async_ollama_wrapper import AsyncOllamaWrapper
 
 def get_async_llm(provider: str, config: dict):
     """
     Factory function to create async LLM wrapper instances using the registry pattern.
     
     Args:
-        provider: Name of the LLM provider ('openai', 'anthropic', 'gemini', 'grok')
+        provider: Name of the LLM provider ('openai', 'anthropic', 'gemini', 'grok', 'ollama')
         config: Configuration dictionary containing API keys and other settings
         
     Returns:

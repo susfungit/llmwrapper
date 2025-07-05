@@ -6,13 +6,14 @@ from .openai_wrapper import OpenAIWrapper
 from .anthropic_wrapper import ClaudeWrapper
 from .gemini_wrapper import GeminiWrapper
 from .grok_wrapper import GrokWrapper
+from .ollama_wrapper import OllamaWrapper
 
 def get_llm(provider: str, config: dict):
     """
     Factory function to create LLM wrapper instances using the registry pattern.
     
     Args:
-        provider: Name of the LLM provider ('openai', 'anthropic', 'gemini', 'grok')
+        provider: Name of the LLM provider ('openai', 'anthropic', 'gemini', 'grok', 'ollama')
         config: Configuration dictionary containing API keys and other settings
         
     Returns:

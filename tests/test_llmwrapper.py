@@ -181,6 +181,36 @@ class TestFactory:
             assert llm.provider == "grok"
             assert llm.base_url == "https://api.x.ai/v1"
 
+    def test_factory_ollama(self):
+        """Test factory with Ollama provider using registry mocking"""
+        class MockOllamaWrapper:
+            def __init__(self, api_key, model, base_url):
+                self.api_key = api_key
+                self.model = model
+                self.base_url = base_url
+                self.provider = "ollama"
+            def chat(self, messages, **kwargs):
+                return "Mocked Ollama response"
+            def list_models(self):
+                return ["llama3", "mistral", "codellama"]
+        
+        mock_provider_info = {
+            'class': MockOllamaWrapper,
+            'default_model': 'llama3',
+            'config': {'base_url': 'http://localhost:11434'}
+        }
+        
+        with patch('llmwrapper.registry.llm_registry.get_sync_provider') as mock_get_provider:
+            mock_get_provider.return_value = mock_provider_info
+            
+            config = {"api_key": None, "model": "llama3", "base_url": "http://localhost:11434"}
+            llm = get_llm("ollama", config)
+            assert llm.chat([{"role": "user", "content": "Hi"}]) == "Mocked Ollama response"
+            assert llm.model == "llama3"
+            assert llm.provider == "ollama"
+            assert llm.base_url == "http://localhost:11434"
+            assert llm.list_models() == ["llama3", "mistral", "codellama"]
+
     def test_factory_invalid_provider(self):
         config = {"api_key": "test"}
         with pytest.raises(ValueError, match="Unsupported sync provider"):
@@ -274,6 +304,41 @@ class TestWrapperInitialization:
                     base_url="https://api.x.ai/v1"
                 )
 
+    def test_ollama_wrapper_initialization(self):
+        """Test that Ollama wrapper can be initialized with proper parameters"""
+        from llmwrapper.ollama_wrapper import OllamaWrapper
+        
+        with patch('llmwrapper.ollama_wrapper.requests.get') as mock_get:
+            mock_response = Mock()
+            mock_response.raise_for_status.return_value = None
+            mock_get.return_value = mock_response
+            
+            with patch.object(LoggingMixin, 'log_provider_init') as mock_log:
+                wrapper = OllamaWrapper(api_key=None, model="llama3", base_url="http://localhost:11434")
+                
+                assert wrapper.model == "llama3"
+                assert wrapper.provider == "ollama"
+                assert wrapper.base_url == "http://localhost:11434"
+                assert wrapper.api_key is None
+                mock_log.assert_called_once_with("ollama", "llama3")
+                
+                # Verify connection was verified
+                mock_get.assert_called_once_with(
+                    "http://localhost:11434/api/tags",
+                    timeout=5
+                )
+
+    def test_ollama_wrapper_connection_error(self):
+        """Test Ollama wrapper with connection error"""
+        from llmwrapper.ollama_wrapper import OllamaWrapper
+        import requests
+        
+        with patch('llmwrapper.ollama_wrapper.requests.get') as mock_get:
+            mock_get.side_effect = requests.RequestException("Connection failed")
+            
+            with pytest.raises(ConnectionError, match="Ollama server not accessible"):
+                OllamaWrapper(api_key=None, model="llama3")
+
 class TestWrapperChatMethods:
     """Test the chat methods of each wrapper with proper mocking"""
 
@@ -360,6 +425,108 @@ class TestWrapperChatMethods:
                     api_key="test-key",
                     base_url="https://api.x.ai/v1"
                 )
+
+    def test_ollama_chat_method(self):
+        """Test Ollama chat method with proper API mocking"""
+        from llmwrapper.ollama_wrapper import OllamaWrapper
+        
+        # Mock response structure from Ollama API
+        mock_response_json = {
+            "response": "Hello! I'm Llama, an AI assistant.",
+            "prompt_eval_count": 10,
+            "eval_count": 20
+        }
+        
+        mock_response = Mock()
+        mock_response.json.return_value = mock_response_json
+        mock_response.raise_for_status.return_value = None
+        
+        with patch('llmwrapper.ollama_wrapper.requests.get') as mock_get, \
+             patch('llmwrapper.ollama_wrapper.requests.post') as mock_post:
+            
+            # Mock connection verification
+            mock_get.return_value = Mock()
+            mock_get.return_value.raise_for_status.return_value = None
+            
+            # Mock API call
+            mock_post.return_value = mock_response
+            
+            with patch.object(LoggingMixin, 'log_call_start') as mock_start, \
+                 patch.object(LoggingMixin, 'log_call_end') as mock_end, \
+                 patch.object(LoggingMixin, 'log_token_usage') as mock_usage_log, \
+                 patch.object(LoggingMixin, 'log_provider_init'):
+                
+                wrapper = OllamaWrapper(api_key=None, model="llama3", base_url="http://localhost:11434")
+                messages = [{"role": "user", "content": "Hello"}]
+                response = wrapper.chat(messages)
+                
+                assert response == "Hello! I'm Llama, an AI assistant."
+                mock_start.assert_called_once_with("ollama", "llama3", 1)
+                mock_end.assert_called_once()
+                mock_usage_log.assert_called_once()
+                
+                # Verify the API call was made correctly
+                mock_post.assert_called_once()
+                call_args = mock_post.call_args
+                assert call_args[0][0] == "http://localhost:11434/api/generate"
+                assert call_args[1]["json"]["model"] == "llama3"
+                assert call_args[1]["json"]["stream"] is False
+
+    def test_ollama_list_models_method(self):
+        """Test Ollama list_models method"""
+        from llmwrapper.ollama_wrapper import OllamaWrapper
+        
+        # Mock response for list models API
+        mock_models_response = {
+            "models": [
+                {"name": "llama3:latest"},
+                {"name": "mistral:latest"},
+                {"name": "codellama:latest"}
+            ]
+        }
+        
+        mock_response = Mock()
+        mock_response.json.return_value = mock_models_response
+        mock_response.raise_for_status.return_value = None
+        
+        with patch('llmwrapper.ollama_wrapper.requests.get') as mock_get:
+            # First call for connection verification, second for list models
+            mock_get.return_value = mock_response
+            
+            with patch.object(LoggingMixin, 'log_provider_init'):
+                wrapper = OllamaWrapper(api_key=None, model="llama3", base_url="http://localhost:11434")
+                models = wrapper.list_models()
+                
+                assert models == ["llama3:latest", "mistral:latest", "codellama:latest"]
+                assert mock_get.call_count == 2  # Connection check + list models
+
+    def test_ollama_message_conversion(self):
+        """Test message conversion from OpenAI format to Ollama format"""
+        from llmwrapper.ollama_wrapper import OllamaWrapper
+        
+        with patch('llmwrapper.ollama_wrapper.requests.get') as mock_get:
+            mock_get.return_value = Mock()
+            mock_get.return_value.raise_for_status.return_value = None
+            
+            with patch.object(LoggingMixin, 'log_provider_init'):
+                wrapper = OllamaWrapper(api_key=None, model="llama3")
+                
+                messages = [
+                    {"role": "system", "content": "You are helpful."},
+                    {"role": "user", "content": "Hello"},
+                    {"role": "assistant", "content": "Hi there!"},
+                    {"role": "user", "content": "How are you?"}
+                ]
+                
+                prompt = wrapper._convert_messages_to_prompt(messages)
+                
+                expected_prompt = ("System: You are helpful.\n\n"
+                                 "Human: Hello\n\n"
+                                 "Assistant: Hi there!\n\n"
+                                 "Human: How are you?\n\n"
+                                 "Assistant:")
+                
+                assert prompt == expected_prompt
 
 class TestErrorHandling:
     """Test error handling scenarios"""

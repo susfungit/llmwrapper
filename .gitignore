@@ -141,6 +141,7 @@ Thumbs.db
 .env.development
 config_local.py
 secrets.json
+config.json
 
 # PyPI upload artifacts
 twine-upload.log

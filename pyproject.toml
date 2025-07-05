@@ -51,5 +51,6 @@ where = ["."]
 include = ["llmwrapper*"]
 exclude = ["tests*", "examples*"]
 
-[tool.setuptools.package-data]
-llmwrapper = ["*.json"] 
+# Package data - excluding sensitive config files
+# [tool.setuptools.package-data]
+# llmwrapper = ["*.json"]  # Removed to prevent including config files 

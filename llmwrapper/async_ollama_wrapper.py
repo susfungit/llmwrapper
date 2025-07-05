@@ -5,6 +5,7 @@ from .async_base import AsyncBaseLLM
 from .logger import logger
 from .logging_mixin import LoggingMixin
 from .registry import register_async_provider
+from .security_utils import SecurityUtils
 
 @register_async_provider("ollama", "llama3", base_url="http://localhost:11434")
 class AsyncOllamaWrapper(AsyncBaseLLM, LoggingMixin):
@@ -25,6 +26,22 @@ class AsyncOllamaWrapper(AsyncBaseLLM, LoggingMixin):
             base_url: Ollama server URL
             api_key: Unused but kept for interface consistency
         """
+        # Validate base URL format
+        if not SecurityUtils.validate_url(base_url):
+            self.log_security_event("INVALID_URL", {
+                "provider": "ollama",
+                "base_url": "invalid_format"
+            })
+            raise ValueError("Invalid Ollama base URL format")
+        
+        # Validate API key (should be None for Ollama)
+        if not SecurityUtils.validate_api_key(api_key, "ollama"):
+            self.log_security_event("INVALID_API_KEY", {
+                "provider": "ollama",
+                "api_key_format": "invalid"
+            })
+            raise ValueError("Invalid API key for Ollama (should be None)")
+        
         self.base_url = base_url.rstrip('/')
         self.model = model
         self.provider = "ollama"
@@ -47,6 +64,11 @@ class AsyncOllamaWrapper(AsyncBaseLLM, LoggingMixin):
                 response.raise_for_status()
                 logger.debug(f"Ollama server accessible at {self.base_url}")
         except aiohttp.ClientError as e:
+            self.log_security_event("CONNECTION_FAILED", {
+                "provider": self.provider,
+                "base_url": self.base_url,
+                "error_type": type(e).__name__
+            })
             logger.error(f"Failed to connect to Ollama server at {self.base_url}: {e}")
             raise ConnectionError(f"Ollama server not accessible at {self.base_url}. "
                                 f"Please ensure Ollama is running: 'ollama serve'")
@@ -92,6 +114,14 @@ class AsyncOllamaWrapper(AsyncBaseLLM, LoggingMixin):
         Returns:
             Response content as string
         """
+        # Validate messages before processing
+        if not SecurityUtils.validate_messages(messages):
+            self.log_security_event("INVALID_MESSAGES", {
+                "provider": self.provider,
+                "message_count": len(messages) if isinstance(messages, list) else 0
+            })
+            raise ValueError("Invalid message format or potential injection detected")
+        
         start = self.log_call_start(self.provider, self.model, len(messages))
         
         # Verify connection on first use
@@ -108,15 +138,50 @@ class AsyncOllamaWrapper(AsyncBaseLLM, LoggingMixin):
             "options": {}
         }
         
-        # Map common parameters to Ollama options
+        # Map common parameters to Ollama options with validation
         if 'temperature' in kwargs:
-            payload['options']['temperature'] = kwargs['temperature']
+            temp = kwargs['temperature']
+            if not isinstance(temp, (int, float)) or temp < 0 or temp > 2:
+                self.log_security_event("INVALID_PARAMETER", {
+                    "provider": self.provider,
+                    "parameter": "temperature",
+                    "value": temp
+                })
+                raise ValueError("Temperature must be between 0 and 2")
+            payload['options']['temperature'] = temp
+            
         if 'max_tokens' in kwargs:
-            payload['options']['num_predict'] = kwargs['max_tokens']
+            max_tokens = kwargs['max_tokens']
+            if not isinstance(max_tokens, int) or max_tokens < 1 or max_tokens > 32768:
+                self.log_security_event("INVALID_PARAMETER", {
+                    "provider": self.provider,
+                    "parameter": "max_tokens",
+                    "value": max_tokens
+                })
+                raise ValueError("max_tokens must be between 1 and 32768")
+            payload['options']['num_predict'] = max_tokens
+            
         if 'top_p' in kwargs:
-            payload['options']['top_p'] = kwargs['top_p']
+            top_p = kwargs['top_p']
+            if not isinstance(top_p, (int, float)) or top_p < 0 or top_p > 1:
+                self.log_security_event("INVALID_PARAMETER", {
+                    "provider": self.provider,
+                    "parameter": "top_p",
+                    "value": top_p
+                })
+                raise ValueError("top_p must be between 0 and 1")
+            payload['options']['top_p'] = top_p
+            
         if 'top_k' in kwargs:
-            payload['options']['top_k'] = kwargs['top_k']
+            top_k = kwargs['top_k']
+            if not isinstance(top_k, int) or top_k < 1 or top_k > 100:
+                self.log_security_event("INVALID_PARAMETER", {
+                    "provider": self.provider,
+                    "parameter": "top_k",
+                    "value": top_k
+                })
+                raise ValueError("top_k must be between 1 and 100")
+            payload['options']['top_k'] = top_k
         
         session = await self._get_session()
         
@@ -131,6 +196,10 @@ class AsyncOllamaWrapper(AsyncBaseLLM, LoggingMixin):
                 result = await response.json()
                 
                 if 'response' not in result:
+                    self.log_security_event("UNEXPECTED_RESPONSE", {
+                        "provider": self.provider,
+                        "response_keys": list(result.keys()) if isinstance(result, dict) else "non_dict"
+                    })
                     raise ValueError(f"Unexpected response format from Ollama: {result}")
                 
                 content = result['response'].strip()
@@ -148,9 +217,19 @@ class AsyncOllamaWrapper(AsyncBaseLLM, LoggingMixin):
                 return content
                 
         except aiohttp.ClientError as e:
+            self.log_security_event("API_REQUEST_FAILED", {
+                "provider": self.provider,
+                "error_type": type(e).__name__,
+                "base_url": self.base_url
+            })
             logger.error(f"Ollama API request failed: {e}")
             raise RuntimeError(f"Failed to get response from Ollama: {e}")
         except Exception as e:
+            self.log_security_event("UNEXPECTED_ERROR", {
+                "provider": self.provider,
+                "error_type": type(e).__name__,
+                "model": self.model
+            })
             logger.error(f"Unexpected error in Ollama chat: {e}")
             raise
     

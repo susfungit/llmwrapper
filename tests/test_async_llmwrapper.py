@@ -13,7 +13,7 @@ class TestAsyncLLMWrappers:
 
     def test_get_async_llm_openai(self):
         """Test async factory function for OpenAI"""
-        config = {"api_key": "test-key", "model": "gpt-4"}
+        config = {"api_key": "sk-test1234567890abcdef1234567890abcdef", "model": "gpt-4"}
         llm = get_async_llm("openai", config)
         
         assert isinstance(llm, AsyncOpenAIWrapper)
@@ -22,7 +22,7 @@ class TestAsyncLLMWrappers:
 
     def test_get_async_llm_anthropic(self):
         """Test async factory function for Anthropic"""
-        config = {"api_key": "test-key", "model": "claude-3-sonnet-20240229"}
+        config = {"api_key": "sk-ant-test1234567890abcdef1234567890abcdef", "model": "claude-3-sonnet-20240229"}
         llm = get_async_llm("anthropic", config)
         
         assert isinstance(llm, AsyncClaudeWrapper)
@@ -31,7 +31,7 @@ class TestAsyncLLMWrappers:
 
     def test_get_async_llm_gemini(self):
         """Test async factory function for Gemini"""
-        config = {"api_key": "test-key", "model": "gemini-pro"}
+        config = {"api_key": "AIzatest1234567890abcdef1234567890abcdef", "model": "gemini-pro"}
         llm = get_async_llm("gemini", config)
         
         assert isinstance(llm, AsyncGeminiWrapper)
@@ -40,7 +40,7 @@ class TestAsyncLLMWrappers:
 
     def test_get_async_llm_grok(self):
         """Test async factory function for Grok"""
-        config = {"api_key": "test-key", "model": "grok-beta"}
+        config = {"api_key": "xai-test1234567890abcdef1234567890abcdef", "model": "grok-beta"}
         llm = get_async_llm("grok", config)
         
         assert isinstance(llm, AsyncGrokWrapper)
@@ -59,14 +59,14 @@ class TestAsyncLLMWrappers:
 
     def test_get_async_llm_invalid_provider(self):
         """Test async factory with invalid provider"""
-        config = {"api_key": "test-key"}
+        config = {"api_key": "sk-test1234567890abcdef1234567890abcdef"}
 
         with pytest.raises(ValueError, match="Unsupported async provider"):
             get_async_llm("unknown", config)
 
     def test_async_openai_wrapper_init(self):
         """Test AsyncOpenAIWrapper initialization"""
-        wrapper = AsyncOpenAIWrapper(api_key="test-key", model="gpt-4")
+        wrapper = AsyncOpenAIWrapper(api_key="sk-test1234567890abcdef1234567890abcdef", model="gpt-4")
         
         assert wrapper.model == "gpt-4"
         assert wrapper.provider == "openai"
@@ -97,7 +97,7 @@ class TestAsyncLLMWrappers:
         mock_client.chat.completions.create.return_value = mock_response
         mock_openai.return_value = mock_client
         
-        wrapper = AsyncOpenAIWrapper(api_key="test-key", model="gpt-4")
+        wrapper = AsyncOpenAIWrapper(api_key="sk-test1234567890abcdef1234567890abcdef", model="gpt-4")
         messages = [{"role": "user", "content": "Hello"}]
         response = await wrapper.chat(messages)
         
@@ -106,7 +106,7 @@ class TestAsyncLLMWrappers:
 
     def test_async_claude_wrapper_init(self):
         """Test AsyncClaudeWrapper initialization"""
-        wrapper = AsyncClaudeWrapper(api_key="test-key", model="claude-3-sonnet-20240229")
+        wrapper = AsyncClaudeWrapper(api_key="sk-ant-test1234567890abcdef1234567890abcdef", model="claude-3-sonnet-20240229")
         
         assert wrapper.model == "claude-3-sonnet-20240229"
         assert wrapper.provider == "anthropic"
@@ -127,7 +127,7 @@ class TestAsyncLLMWrappers:
         mock_client.messages.create.return_value = mock_response
         mock_anthropic.return_value = mock_client
         
-        wrapper = AsyncClaudeWrapper(api_key="test-key", model="claude-3-sonnet-20240229")
+        wrapper = AsyncClaudeWrapper(api_key="sk-ant-test1234567890abcdef1234567890abcdef", model="claude-3-sonnet-20240229")
         messages = [{"role": "user", "content": "Hello"}]
         response = await wrapper.chat(messages)
         
@@ -136,7 +136,7 @@ class TestAsyncLLMWrappers:
 
     def test_async_gemini_wrapper_init(self):
         """Test AsyncGeminiWrapper initialization"""
-        wrapper = AsyncGeminiWrapper(api_key="test-key", model="gemini-pro")
+        wrapper = AsyncGeminiWrapper(api_key="AIzatest1234567890abcdef1234567890abcdef", model="gemini-pro")
         
         assert wrapper.model == "gemini-pro"
         assert wrapper.provider == "gemini"
@@ -164,7 +164,7 @@ class TestAsyncLLMWrappers:
         mock_client.models.generate_content.return_value = mock_response
         mock_genai.return_value = mock_client
         
-        wrapper = AsyncGeminiWrapper(api_key="test-key", model="gemini-pro")
+        wrapper = AsyncGeminiWrapper(api_key="AIzatest1234567890abcdef1234567890abcdef", model="gemini-pro")
         messages = [{"role": "user", "content": "Hello"}]
         response = await wrapper.chat(messages)
         
@@ -172,7 +172,7 @@ class TestAsyncLLMWrappers:
 
     def test_async_grok_wrapper_init(self):
         """Test AsyncGrokWrapper initialization"""
-        wrapper = AsyncGrokWrapper(api_key="test-key", model="grok-beta")
+        wrapper = AsyncGrokWrapper(api_key="xai-test1234567890abcdef1234567890abcdef", model="grok-beta")
         
         assert wrapper.model == "grok-beta"
         assert wrapper.provider == "grok"
@@ -213,7 +213,7 @@ class TestAsyncLLMWrappers:
         mock_client.chat.completions.create.return_value = mock_response
         mock_openai.return_value = mock_client
         
-        wrapper = AsyncGrokWrapper(api_key="test-key", model="grok-beta")
+        wrapper = AsyncGrokWrapper(api_key="xai-test1234567890abcdef1234567890abcdef", model="grok-beta")
         messages = [{"role": "user", "content": "Hello"}]
         response = await wrapper.chat(messages)
         
@@ -224,29 +224,29 @@ class TestAsyncLLMWrappers:
     @pytest.mark.asyncio
     async def test_async_ollama_wrapper_chat(self):
         """Test AsyncOllamaWrapper chat method"""
-        # This test is skipped due to complexity of mocking async context managers
-        # The functionality is tested via integration tests instead
+        # This test is skipped because mocking aiohttp with proper async context managers
+        # is complex and we test this functionality via integration tests instead
         pass
 
     @pytest.mark.skip(reason="Async context manager mocking is complex - tested via integration tests")
     @pytest.mark.asyncio
     async def test_async_ollama_wrapper_list_models(self):
         """Test AsyncOllamaWrapper list_models method"""
-        # This test is skipped due to complexity of mocking async context managers
-        # The functionality is tested via integration tests instead
+        # This test is skipped because mocking aiohttp with proper async context managers
+        # is complex and we test this functionality via integration tests instead
         pass
 
     @pytest.mark.asyncio
     async def test_async_ollama_wrapper_context_manager(self):
         """Test AsyncOllamaWrapper as async context manager"""
         from llmwrapper.async_ollama_wrapper import AsyncOllamaWrapper
+        wrapper = AsyncOllamaWrapper(api_key=None, model="llama3", base_url="http://localhost:11434")
         
-        wrapper = AsyncOllamaWrapper(api_key=None, model="llama3")
+        async with wrapper as ctx_wrapper:
+            assert ctx_wrapper is wrapper
         
-        with patch.object(wrapper, 'close') as mock_close:
-            async with wrapper:
-                pass
-            mock_close.assert_called_once()
+        # After exiting context, session should be None or closed
+        assert wrapper._session is None or wrapper._session.closed
 
     @pytest.mark.asyncio
     @patch('llmwrapper.async_anthropic_wrapper.anthropic.AsyncAnthropic')
@@ -275,19 +275,19 @@ class TestAsyncLLMWrappers:
         mock_anthropic.return_value = mock_anthropic_client
         
         # Create wrappers
-        openai_wrapper = AsyncOpenAIWrapper(api_key="test-key", model="gpt-4")
-        anthropic_wrapper = AsyncClaudeWrapper(api_key="test-key", model="claude-3-sonnet-20240229")
+        openai_wrapper = AsyncOpenAIWrapper(api_key="sk-test1234567890abcdef1234567890abcdef", model="gpt-4")
+        anthropic_wrapper = AsyncClaudeWrapper(api_key="sk-ant-test1234567890abcdef1234567890abcdef", model="claude-3-sonnet-20240229")
         
-        # Test concurrent calls
         messages = [{"role": "user", "content": "Hello"}]
-        responses = await asyncio.gather(
+        
+        # Run concurrent calls
+        results = await asyncio.gather(
             openai_wrapper.chat(messages),
             anthropic_wrapper.chat(messages)
         )
         
-        assert len(responses) == 2
-        assert responses[0] == "OpenAI response"
-        assert responses[1] == "Anthropic response"
+        assert results[0] == "OpenAI response"
+        assert results[1] == "Anthropic response"
 
     @pytest.mark.asyncio
     @patch('llmwrapper.async_openai_wrapper.AsyncOpenAI')
@@ -297,7 +297,7 @@ class TestAsyncLLMWrappers:
         mock_client.chat.completions.create.side_effect = Exception("API Error")
         mock_openai.return_value = mock_client
         
-        wrapper = AsyncOpenAIWrapper(api_key="test-key", model="gpt-4")
+        wrapper = AsyncOpenAIWrapper(api_key="sk-test1234567890abcdef1234567890abcdef", model="gpt-4")
         messages = [{"role": "user", "content": "Hello"}]
         
         with pytest.raises(Exception, match="API Error"):

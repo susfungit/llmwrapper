@@ -1,6 +1,7 @@
 from .async_base import AsyncBaseLLM
 from .logging_mixin import LoggingMixin
 from .registry import register_async_provider
+from .security_utils import SecurityUtils
 from openai import AsyncOpenAI
 
 @register_async_provider("grok", "grok-beta", base_url="https://api.x.ai/v1")
@@ -14,6 +15,22 @@ class AsyncGrokWrapper(AsyncBaseLLM, LoggingMixin):
             model: Grok model name (default: grok-beta)
             base_url: xAI API base URL (default: https://api.x.ai/v1)
         """
+        # Validate API key format
+        if not SecurityUtils.validate_api_key(api_key, "grok"):
+            self.log_security_event("INVALID_API_KEY", {
+                "provider": "grok",
+                "api_key_format": "invalid"
+            })
+            raise ValueError("Invalid Grok API key format")
+        
+        # Validate base URL format
+        if not SecurityUtils.validate_url(base_url):
+            self.log_security_event("INVALID_URL", {
+                "provider": "grok",
+                "base_url": "invalid_format"
+            })
+            raise ValueError("Invalid Grok base URL format")
+        
         self.api_key = api_key
         self.model = model
         self.base_url = base_url
@@ -41,6 +58,14 @@ class AsyncGrokWrapper(AsyncBaseLLM, LoggingMixin):
         Raises:
             Exception: If API call fails
         """
+        # Validate messages before processing
+        if not SecurityUtils.validate_messages(messages):
+            self.log_security_event("INVALID_MESSAGES", {
+                "provider": self.provider,
+                "message_count": len(messages) if isinstance(messages, list) else 0
+            })
+            raise ValueError("Invalid message format or potential injection detected")
+        
         start = self.log_call_start(self.provider, self.model, len(messages))
         
         try:
@@ -66,6 +91,9 @@ class AsyncGrokWrapper(AsyncBaseLLM, LoggingMixin):
             return response.choices[0].message.content
             
         except Exception as e:
-            self.log_call_end(self.provider, self.model, start)
-            self.log_token_usage(self.provider, {})
-            raise Exception(f"Grok API error: {str(e)}") 
+            self.log_security_event("API_ERROR", {
+                "provider": self.provider,
+                "error_type": type(e).__name__,
+                "model": self.model
+            })
+            raise 

@@ -259,7 +259,7 @@ class TestWrapperInitialization:
             mock_anthropic.return_value = mock_client
             
             with patch.object(LoggingMixin, 'log_provider_init') as mock_log:
-                wrapper = ClaudeWrapper(api_key="test-key", model="claude-3-sonnet-20240229")
+                wrapper = ClaudeWrapper(api_key="sk-ant-test1234567890abcdef1234567890abcdef", model="claude-3-sonnet-20240229")
                 
                 assert wrapper.model == "claude-3-sonnet-20240229"
                 assert wrapper.provider == "anthropic"
@@ -275,7 +275,7 @@ class TestWrapperInitialization:
             mock_genai.return_value = mock_client
             
             with patch.object(LoggingMixin, 'log_provider_init') as mock_log:
-                wrapper = GeminiWrapper(api_key="test-key", model="gemini-pro")
+                wrapper = GeminiWrapper(api_key="AIzatest1234567890abcdef1234567890abcdef", model="gemini-pro")
                 
                 assert wrapper.model == "gemini-pro"
                 assert wrapper.provider == "gemini"
@@ -291,17 +291,17 @@ class TestWrapperInitialization:
             mock_openai.return_value = mock_client
             
             with patch.object(LoggingMixin, 'log_provider_init') as mock_log:
-                wrapper = GrokWrapper(api_key="test-key", model="grok-beta")
+                wrapper = GrokWrapper(api_key="xai-test1234567890abcdef1234567890abcdef", model="grok-beta")
                 
                 assert wrapper.model == "grok-beta"
                 assert wrapper.provider == "grok"
-                assert wrapper.api_key == "test-key"
+                assert wrapper.api_key == "xai-test1234567890abcdef1234567890abcdef"
                 assert wrapper.base_url == "https://api.x.ai/v1"
                 mock_log.assert_called_once_with("grok", "grok-beta")
                 
                 # Verify OpenAI client was initialized with correct parameters
                 mock_openai.assert_called_once_with(
-                    api_key="test-key",
+                    api_key="xai-test1234567890abcdef1234567890abcdef",
                     base_url="https://api.x.ai/v1"
                 )
 
@@ -412,7 +412,7 @@ class TestWrapperChatMethods:
                  patch.object(LoggingMixin, 'log_token_usage') as mock_usage_log, \
                  patch.object(LoggingMixin, 'log_provider_init'):
                 
-                wrapper = GrokWrapper(api_key="test-key", model="grok-beta")
+                wrapper = GrokWrapper(api_key="xai-test1234567890abcdef1234567890abcdef", model="grok-beta")
                 messages = [{"role": "user", "content": "Hello"}]
                 response = wrapper.chat(messages)
                 
@@ -423,7 +423,7 @@ class TestWrapperChatMethods:
                 
                 # Verify OpenAI client was initialized with correct parameters
                 mock_openai_class.assert_called_once_with(
-                    api_key="test-key",
+                    api_key="xai-test1234567890abcdef1234567890abcdef",
                     base_url="https://api.x.ai/v1"
                 )
 
